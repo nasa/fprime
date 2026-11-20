@@ -397,6 +397,40 @@ void FileUplinkTester ::cancelPacketInDataMode() {
     this->removeFile("test.bin");
 }
 
+void FileUplinkTester ::tooShortPacket() {
+    // One byte cannot hold a packet descriptor
+    U8 data[1] = {0xFF};
+    this->sendRawPacket(data, sizeof(data));
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_InvalidPacketReceived(0, static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_UNKNOWN));
+    ASSERT_TLM_SIZE(0);
+}
+
+void FileUplinkTester ::descriptorOnlyPacket() {
+    // Exactly the FW_PACKET_FILE descriptor with no body. Before the fix this reached
+    // FilePacket::fromBuffer with a zero-length buffer and tripped an assertion.
+    U8 data[sizeof(FwPacketDescriptorType)];
+    this->writeFileDescriptor(data);
+    this->sendRawPacket(data, sizeof(data));
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_InvalidPacketReceived(0, static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_UNKNOWN));
+    ASSERT_TLM_SIZE(0);
+}
+
+void FileUplinkTester ::truncatedBodyPacket() {
+    // Descriptor plus one body byte: too short for a file packet header, so a decode error
+    U8 data[sizeof(FwPacketDescriptorType) + 1];
+    this->writeFileDescriptor(data);
+    data[sizeof(FwPacketDescriptorType)] = 0;
+    this->sendRawPacket(data, sizeof(data));
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_DecodeError_SIZE(1);
+    ASSERT_TLM_SIZE(0);
+}
+
 // ----------------------------------------------------------------------
 // Handlers for from ports
 // ----------------------------------------------------------------------
@@ -445,6 +479,25 @@ void FileUplinkTester ::connectPorts() {
 void FileUplinkTester ::initComponents() {
     this->init();
     this->component.init(QUEUE_DEPTH, INSTANCE);
+}
+
+void FileUplinkTester ::sendRawPacket(U8* const data, const size_t size) {
+    this->clearHistory();
+
+    Fw::Buffer buffer(data, static_cast<Fw::Buffer::SizeType>(size));
+    this->invoke_to_bufferSendIn(0, buffer);
+    this->component.doDispatch();
+
+    // The buffer is always handed back to the sender
+    ASSERT_from_bufferSendOut_SIZE(1);
+    ASSERT_from_bufferSendOut(0, buffer);
+}
+
+void FileUplinkTester ::writeFileDescriptor(U8* const data) {
+    Fw::Buffer buffer(data, sizeof(FwPacketDescriptorType));
+    const Fw::SerializeStatus status =
+        buffer.getSerializer().serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);
 }
 
 void FileUplinkTester ::sendFilePacket(const Fw::FilePacket& filePacket) {
