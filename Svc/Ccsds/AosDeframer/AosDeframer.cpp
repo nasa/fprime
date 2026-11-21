@@ -447,11 +447,11 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data) {
     FwSizeType currentOffset = firstHeaderPointer;
 
     // Max Bound is a sequence of 1 byte EPP Idle Packets
-    const FwIndexType maxIters = static_cast<FwIndexType>(dataZoneSize - firstHeaderPointer);
+    const FwSizeType maxIters = dataZoneSize - firstHeaderPointer;
 
     // Extract packets starting at First Header Pointer
     // (All fresh packets from here on out)
-    for (FwIndexType iter = 0; iter < maxIters && currentOffset < dataZoneSize; iter++) {
+    for (FwSizeType iter = 0; iter < maxIters && currentOffset < dataZoneSize; iter++) {
         // Clear out any prior packet data
         this->abandonSpanningPacket(vc);
 
