@@ -12,7 +12,7 @@ description: >-
 
 # Checklist — design stage
 
-Produces `docs/checklist.md` (+ `docs/checklist.json`) for a component whose
+Produces `docs/checklist.md` — the only record — for a component whose
 SDD and FPP model have just been approved. The tool decides everything it can;
 this skill decides the rows the tool queues for the **design** stage and
 nothing else. It performs no development step: it does not build unit tests,
@@ -43,7 +43,7 @@ run coverage, or touch the component.
        --stage design -o <Path/To/Component>/docs/checklist.md
    ```
 
-   The Hand-off section and `checklist.json` → `queue` list the rows to decide,
+   The Hand-off section lists the rows to decide,
    each with its review rule (`rule_text`). At this stage the queue is the
    section-1 rows 1.1–1.6 (rule CL-6) plus any section-2 rows the tool left at
    REVIEW. Rows of sections 3–5 are marked *deferred*; leave them.
@@ -94,12 +94,13 @@ The rendered table is read by people; keep it sparse.
   restating the tool's finding, no "Confirmed:" prefixes.
 - **N/A**: one clause stating why the item does not apply.
 - **UNCHECKED**: name the process step that has not been performed.
-- Audits that confirm the tool's verdict are silent in the table; an override
-  renders as one `Audit (...)` line from your `--note`.
+- Every Status cell carries its stamp: `YES @<commit>` (tool), `… by review`
+  (your decision on a row the tool left open), `… overridden by reviewer`
+  (you replaced the tool's verdict — one-clause reason in Notes).
 
 ## Rules
 
-- Decide only the rows in the queue. A tool-decided row is audited at
+- Decide only the rows in the queue. A tool-decided row is read at
   close-out, not here.
 - Every NO/N/A note names the requirement id(s) or SDD section it rests on.
 - Never run `fprime-util check`, coverage, topology builds or hardware steps

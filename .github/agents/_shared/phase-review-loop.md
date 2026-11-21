@@ -97,7 +97,10 @@ per step 2, then one close by the author. Review k is the k-th such review.
    user, batched once per round, cardinal rule 1). The ask is
    blocking: the next review starts after the user answers; if the
    user defers, log it and the item stays open. An elicitation finding
-   is never closed by inventing the answer. For every could-fix record fixed /
+   is never closed by inventing the answer. Inside a development
+   campaign the writer answers instead, as a recorded proposal the
+   approver rules on at gate 1 (`fprime-development-campaign` step 6).
+   For every could-fix record fixed /
    declined-with-reason. Deleting a row or removing a design element
    never closes a must-fix by itself: record the deletion, and the
    reviewer re-runs its set-level checks (RS-1..3; for design, the
@@ -155,4 +158,5 @@ so.
 - Skipping the loop because the artifact is small; a short artifact
   takes one short review.
 - Declaring a phase review-passing with an open, unrouted must-fix.
-- Closing an elicitation finding without the user's answer.
+- Closing an elicitation finding without the user's answer or, in a
+  development campaign, the writer's recorded proposal.

@@ -44,7 +44,7 @@ behind (`coverage/summary.txt`), never produced here.
        -o <Path/To/Component>/docs/checklist.md
    ```
 
-   The queue (`Hand-off` section, `checklist.json` → `queue`) contains:
+   The queue (`Hand-off` section) contains:
    - `review`: section-3/4 rows the tool leaves to a reviewer — 3.21 (CL-1 ISR
      state before enable), 3.23 (CL-2 interrupt enables cleared at init), 3.33
      (CL-3 units in names), 3.38 (CL-4 implementation matches requirements and
@@ -82,14 +82,15 @@ The rendered table is read by people; keep it sparse.
   restating the tool's finding, no "Confirmed:" prefixes.
 - **N/A**: one clause stating why the item does not apply.
 - **UNCHECKED**: name the process step that has not been performed.
-- Audits that confirm the tool's verdict are silent in the table; an override
-  renders as one `Audit (...)` line from your `--note`.
+- Every Status cell carries its stamp: `YES @<commit>` (tool), `… by review`
+  (your decision on a row the tool left open), `… overridden by reviewer`
+  (you replaced the tool's verdict — one-clause reason in Notes).
 
 ## Rules
 - `docs/checklist.md` stays beside `docs/sdd.md`; the SDD's last line is
   `Component Development Checklist: [checklist.md](checklist.md)` — restore it if an SDD edit dropped it.
 
-- Decide only queued rows; tool-decided rows are audited at close-out.
+- Decide only queued rows; the tool's NO/UNCHECKED rows are read at close-out.
 - A `STALE` row is re-read in full, not re-confirmed from its old note.
 - Never run `fprime-util check`, coverage, topology builds or hardware steps
   from this skill; `--build` is reserved for an operator who asks for it.

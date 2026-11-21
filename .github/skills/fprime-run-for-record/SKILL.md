@@ -23,7 +23,7 @@ lives in the run directory `rfr/<run-id>/` outside both repositories;
 ## 0. Tooling
 
 The mechanics live in the `fth` CLI of
-[fprime-testing-harness](https://github.com/LeStarch/fprime-testing-harness)
+[fprime-testing-harness](https://github.com/lestarch-autobot/fprime-testing-harness)
 (stage-3 subset: `fth manifest | verify | draw | seal-id | run | audit | hash-record |
 verify-record | unseal | render-ql | vectors | selftest`), pinned by version in
 `.github/agents/_shared/test-process-contract.md` §8 — no script ships
@@ -35,8 +35,8 @@ stage-3 step (bench host included):
 # fails. Clone it ONCE as `harness` — the same checkout `fth manifest --harness harness` pins — with the
 # credentials the host already has (gh auth or ssh; a token URL would land in .git/config, so prefer
 # those), check out the pinned commit, install editable FROM that checkout:
-git clone https://github.com/LeStarch/fprime-testing-harness harness   # or: git@github.com:LeStarch/fprime-testing-harness.git
-git -C harness checkout --detach v0.1.2        # annotated tag = 855dd4f (fth frozen: refusal fixes only until the next trial closes)
+git clone https://github.com/lestarch-autobot/fprime-testing-harness harness   # or: git@github.com:lestarch-autobot/fprime-testing-harness.git
+git -C harness checkout --detach v0.1.29       # annotated tag = fb09828 (fth frozen: refusal fixes only until the next trial closes)
 pip install -e "harness[test]"
 python -c "import fth, os; assert os.path.realpath(fth.__file__).startswith(os.path.realpath('harness')), fth.__file__"
 fth selftest          # exercises every seal subcommand in a temp dir
