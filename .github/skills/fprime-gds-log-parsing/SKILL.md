@@ -1,6 +1,6 @@
 ---
 name: fprime-gds-log-parsing
-description: Find and parse the logs written by the F Prime GDS (fprime-gds, fprime-cli, GDS integration tests). Maps each log file to its content, gives the line format of event.log, channel.log, command.log and the flight software console log, and grep/awk recipes to answer "what went wrong", "did this command complete", and "what was this channel's value". Use when diagnosing a GDS run, a failed integration test, or any question answerable from a `logs/` directory. Keywords: F Prime, GDS, logs, event.log, channel.log, command.log, recv.bin, TestLog, grep, telemetry, EVR.
+description: Locate and parse F Prime GDS logs (event.log, channel.log, command.log, flight software console log) - file map, line formats, and grep recipes. Use when diagnosing a GDS run or answering a question from a `logs/` directory.
 ---
 
 # Skill: Parsing F Prime GDS logs
