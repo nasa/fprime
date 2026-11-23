@@ -69,6 +69,9 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     //! Test dropping a detected frame when allocation fails and the ring is full
     void testDropValidFrameWhenAllocationFailsAndRingIsFull();
 
+    //! Test that an undersized allocated buffer is refused like an unavailable one
+    void testUndersizedBufferAllocation();
+
     //! Test handling of errors from the FrameDetector (too large size_out)
     void testDetectionErrorHandling();
 
@@ -129,6 +132,7 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     Svc::FrameAccumulator component;
 
     bool m_failBufferAllocate;
+    bool m_undersizedBufferAllocate;
     Fw::Buffer m_buffer;  // buffer to be returned by mocked bufferAllocate call
     U8 m_buffer_slot[2048];
 };

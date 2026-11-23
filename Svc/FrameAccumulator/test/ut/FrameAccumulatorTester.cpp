@@ -17,7 +17,8 @@ namespace Svc {
 FrameAccumulatorTester ::FrameAccumulatorTester()
     : FrameAccumulatorGTestBase("FrameAccumulatorTester", FrameAccumulatorTester::MAX_HISTORY_SIZE),
       component("FrameAccumulator"),
-      m_failBufferAllocate(false) {
+      m_failBufferAllocate(false),
+      m_undersizedBufferAllocate(false) {
     component.configure(this->mockDetector, 1, this->mallocator, 2048);
     this->initComponents();
     this->connectPorts();
@@ -183,6 +184,46 @@ void FrameAccumulatorTester ::testDropValidFrameWhenAllocationFailsAndRingIsFull
     ASSERT_EVENTS_FrameDetectionValidFrameDropped_SIZE(1);
 }
 
+void FrameAccumulatorTester ::testUndersizedBufferAllocation() {
+    U8 data[2048] = {};
+    Fw::Buffer buffer(data, sizeof(data));
+    ComCfg::FrameContext context;
+    const FwSizeType ringCapacity = this->component.m_inRing.get_capacity();
+
+    ASSERT_EQ(ringCapacity, sizeof(data));
+    ASSERT_EQ(this->component.m_inRing.get_free_size(), ringCapacity);
+
+    // Ring full: the undersized buffer is refused and the frame is dropped like
+    // an unavailable allocation
+    this->m_undersizedBufferAllocate = true;
+    this->mockDetector.set_next_result(FrameDetector::Status::FRAME_DETECTED, buffer.getSize());
+    this->invoke_to_dataIn(0, buffer, context);
+
+    ASSERT_from_dataReturnOut_SIZE(1);  // input buffer ownership was returned
+    ASSERT_from_dataOut_SIZE(0);        // no frame was sent: the buffer was too small
+    ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0);
+    ASSERT_EQ(this->component.m_inRing.get_free_size(), ringCapacity);
+    ASSERT_EVENTS_SIZE(2);
+    ASSERT_EVENTS_NoBufferAvailable_SIZE(1);
+    ASSERT_EVENTS_FrameDetectionValidFrameDropped_SIZE(1);
+
+    this->clearHistory();
+
+    // Ring not full: the undersized buffer is refused but the frame stays queued
+    // for a later retry instead of being dropped
+    U8 smallData[8] = {};
+    Fw::Buffer smallBuffer(smallData, sizeof(smallData));
+    this->m_undersizedBufferAllocate = true;
+    this->mockDetector.set_next_result(FrameDetector::Status::FRAME_DETECTED, smallBuffer.getSize());
+    this->invoke_to_dataIn(0, smallBuffer, context);
+
+    ASSERT_from_dataReturnOut_SIZE(1);  // input buffer ownership was returned
+    ASSERT_from_dataOut_SIZE(0);        // no frame was sent: the buffer was too small
+    ASSERT_EQ(this->component.m_inRing.get_allocated_size(), sizeof(smallData));  // frame still queued
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_NoBufferAvailable_SIZE(1);
+}
+
 void FrameAccumulatorTester ::testDetectionErrorHandling() {
     FwSizeType too_large_size = this->component.m_inRing.get_capacity() + 1;
     // Using buffer_size=1 to simplify test since otherwise Accumulator will loop `buffer_size` times
@@ -320,6 +361,14 @@ Fw::Buffer FrameAccumulatorTester ::from_bufferAllocate_handler(FwIndexType port
     if (this->m_failBufferAllocate) {
         this->m_failBufferAllocate = false;
         return Fw::Buffer();
+    }
+    if (this->m_undersizedBufferAllocate) {
+        this->m_undersizedBufferAllocate = false;
+        // Valid buffer, but one byte short of the requested frame
+        const FwSizeType undersized = (size > 0) ? size - 1 : 0;
+        this->m_buffer.set(this->m_buffer_slot, undersized);
+        ::memset(this->m_buffer.getData(), 0, undersized);
+        return this->m_buffer;
     }
     this->m_buffer.set(this->m_buffer_slot, size);
     ::memset(this->m_buffer.getData(), 0, size);
