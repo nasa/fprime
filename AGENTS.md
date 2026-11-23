@@ -111,6 +111,7 @@ relevant one instead of improvising:
   (harness), `fprime-test-oracle` (pass rules and checkers),
   `fprime-run-for-record` (seal, run, audit, unseal).
 - Deriving generated C++ names or wiring from the `.fpp` without reading autocode: `fprime-fpp-navigation`.
+- Reading GDS logs (events, telemetry, commands, flight software console): `fprime-gds-log-parsing`.
 
 Pull-request review is performed by the multi-agent flow in
 [`.github/agents/`](.github/agents/), entered through
