@@ -12,10 +12,10 @@ crate-type = ["staticlib"]
 [dependencies]
 
 # We will provide the panic handler and allocator
-spacewasm_c_api = { version = "=0.8.0-rc.2", default-features = false, features = [
+spacewasm_c_api = { version = "=0.8.0-rc.4", default-features = false, features = [
     "provide-panic-handler",
 ] }
-spacewasm = "=0.8.0-rc.2"
+spacewasm = "=0.8.0-rc.4"
 
 [profile.release]
 opt-level = 3
