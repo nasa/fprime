@@ -52,6 +52,11 @@ TEST(FrameAccumulator, testDropValidFrameWhenAllocationFailsAndRingIsFull) {
     tester.testDropValidFrameWhenAllocationFailsAndRingIsFull();
 }
 
+TEST(FrameAccumulator, testUndersizedBufferAllocation) {
+    Svc::FrameAccumulatorTester tester;
+    tester.testUndersizedBufferAllocation();
+}
+
 TEST(FrameAccumulator, testDetectionErrorHandling) {
     Svc::FrameAccumulatorTester tester;
     tester.testDetectionErrorHandling();
