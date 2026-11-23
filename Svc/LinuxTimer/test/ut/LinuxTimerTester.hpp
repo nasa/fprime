@@ -13,6 +13,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
+#include <atomic>
 #include "LinuxTimerGTestBase.hpp"
 #include "Svc/LinuxTimer/LinuxTimer.hpp"
 
@@ -40,6 +41,14 @@ class LinuxTimerTester : public LinuxTimerGTestBase {
     //! To do
     //!
     void runCycles();
+
+    //! Start the timer for a single tick; used by the interrupted-read test
+    //!
+    void runInterruptedRead();
+
+    //! Number of CycleOut ticks received so far
+    //!
+    U32 getTickCount() const;
 
   private:
     // ----------------------------------------------------------------------
@@ -75,6 +84,10 @@ class LinuxTimerTester : public LinuxTimerGTestBase {
     LinuxTimer component;
 
     U32 m_numCalls;
+
+    //! Ticks received; atomic because the timer thread writes it while the test thread reads it
+    //!
+    std::atomic<U32> m_tickCount;
 };
 
 }  // end namespace Svc
