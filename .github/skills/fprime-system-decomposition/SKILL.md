@@ -23,7 +23,8 @@ is new. Reviewed by `system-decomposition-review.agent.md` under
 
 ## 1. Inputs
 
-- The ask, quoted verbatim (the "Request + goals" of the project campaign).
+- The ask (the "Request + goals" of the project campaign). It is an input
+  to this work, not SSDD content: the SSDD does not quote it.
 - The approved system requirements table: `REQ-<System>-NNN` rows in the
   `fprime-component-requirements` Step 2 form, reviewed by
   `requirements-review.agent.md`. Decomposition does not edit it; a
@@ -72,8 +73,12 @@ A requirement that needs more than one kind is two requirements
    `fpp-diagram-render --kind topology --name <Module.Topology> --document docs/img --hide-pattern-connections --theme light <fpp files>`.
    It writes one image per topology with each imported subtopology
    collapsed to one box, and `<name>.md`: the top-level image followed by
-   one `<details>` block per subtopology. Paste that fragment under
-   `### Topology`. Where the tool is not installed, a Mermaid block diagram.
+   one `<details>` block per subtopology, with a table under each image
+   naming every connection of each bus (`/N` line). Paste that fragment
+   under `### Topology` unedited. This tool is the only source of the
+   topology diagrams: no Mermaid, ASCII or other hand-written diagram
+   stands in for it. Where it is not installed, build it (fpp-tools
+   `editors/code/cli/README.md`) or stop and report.
    Then an instance table `instance | element | rate group / queue | notes`;
    no base ids, priorities or stack sizes — `fprime-topology-development`
    fixes those in the base-deployment lane.
@@ -86,8 +91,9 @@ A requirement that needs more than one kind is two requirements
    it and the element that responds; a scenario with no detector is a
    requirements reopen, not a note.
 6. **Write the SSDD sections** (`docs/ssdd.md` in the deployment
-   repository): `## Introduction` (the ask, platform, ground system — a few
-   sentences), `## Requirements` (the approved table, unchanged — `fth`
+   repository): `## Introduction` (what the deployment does, platform, ground
+   system — a few sentences in the document's own words; the ask is not
+   quoted), `## Requirements` (the approved table, unchanged — `fth`
    reads this heading, contract §3), `## Architecture` (element list,
    diagram, instance table), `## Requirement to Component Map` (the table of step 4), then
    leave `## Inventory` to `fprime-system-allocation` and `## Tests` to

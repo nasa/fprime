@@ -48,7 +48,7 @@ run-for-record lane; every run needs only its `campaign-id` (contract
 
 | Input | Required | Content |
 |---|---|---|
-| Ask + goals | yes | What the deployment must do, quoted verbatim into the SSDD Introduction and every child campaign. Default goal: *a functional deployment with respect to the ask, every system requirement proven in system tests on the complete testbed*. |
+| Ask + goals | yes | What the deployment must do, quoted verbatim to every child campaign and reviewer. The SSDD does not quote it: its Introduction states what the deployment does. Default goal: *a functional deployment with respect to the ask, every system requirement proven in system tests on the complete testbed*. |
 | Project repository | yes | Where the deployment, SSDD, system tests and ledger live; its branch workflow. |
 | Catalogs | yes | The repositories the inheritor may draw from, each at a ref: `nasa/fprime`, the `fprime-community` repositories allowed, project libraries. |
 | Bench facts | yes | As `fprime-development-campaign` §0, for the whole testbed. |

@@ -173,8 +173,12 @@ Numbered sections, in this order and nothing more:
      `fpp-diagram-render` (fpp-tools, `editors/code/cli`):
      `fpp-diagram-render --name <Module.Component> --compact-ports --hide-special-ports --theme light -o docs/img/<Component>.svg <fpp files>`,
      embedded as `![Component <Module.Component>](img/<Component>.svg)`
-     and regenerated whenever the model's ports change. Where the tool is
-     not installed, a fenced ASCII box.
+     and regenerated whenever the model's ports change. This tool, the
+     one `fprime-system-decomposition` draws the SSDD topology with, is
+     the only source of the diagram: no ASCII box, Mermaid block or
+     other hand-written diagram stands in for it. Where it is not
+     installed, build it (fpp-tools `editors/code/cli/README.md`) or
+     stop and report.
      No topology, no peer components.
    - **Ports** — table: name, kind (sync/async/guarded, array size),
      type, purpose in ≤ 8 words; the reason for the kind only when
