@@ -133,17 +133,17 @@ void WasmSequencer ::configure(const Config& cfg, Fw::MemAllocator& mallocator) 
 
     // Allocate the module-load validator scratch storage
     {
-        if (this->m_config.decoderControlFrames > 0) {
-            FwSizeType actualSize = sizeof(spacewasm_control_frame_t) * this->m_config.decoderControlFrames;
-            auto ptr = mallocator.checkedAllocate(MEM_ID_DECODER_CONTROL_FRAMES, actualSize,
-                                                  alignof(spacewasm_control_frame_t));
-            this->m_decoderControlFrames = reinterpret_cast<spacewasm_control_frame_t*>(ptr);
-        }
-        if (this->m_config.decoderOperands > 0) {
-            FwSizeType actualSize = sizeof(spacewasm_operand_t) * this->m_config.decoderOperands;
-            auto ptr = mallocator.checkedAllocate(MEM_ID_DECODER_OPERANDS, actualSize, alignof(spacewasm_operand_t));
-            this->m_decoderOperands = reinterpret_cast<spacewasm_operand_t*>(ptr);
-        }
+        // Every function body needs one control frame, so zero frames could never load a module
+        FW_ASSERT(this->m_config.maxDecoderControlFrames > 0);
+        FwSizeType controlFramesSize = sizeof(spacewasm_control_frame_t) * this->m_config.maxDecoderControlFrames;
+        auto controlFramesPtr = mallocator.checkedAllocate(MEM_ID_DECODER_CONTROL_FRAMES, controlFramesSize,
+                                                           alignof(spacewasm_control_frame_t));
+        this->m_decoderControlFrames = static_cast<spacewasm_control_frame_t*>(controlFramesPtr);
+
+        FW_ASSERT(this->m_config.maxDecoderOperands > 0);
+        FwSizeType actualSize = sizeof(spacewasm_operand_t) * this->m_config.maxDecoderOperands;
+        auto ptr = mallocator.checkedAllocate(MEM_ID_DECODER_OPERANDS, actualSize, alignof(spacewasm_operand_t));
+        this->m_decoderOperands = static_cast<spacewasm_operand_t*>(ptr);
     }
 
     // Allocate the initial store
