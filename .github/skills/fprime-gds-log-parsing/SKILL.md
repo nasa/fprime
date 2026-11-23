@@ -37,8 +37,9 @@ only). For events and telemetry read the longest-connected client
 
 ## 3. CSV line formats
 
-No header row. Fields are comma-separated and **not quoted**; only the
-last field may itself contain commas, so cut it with `-f6-` / `-f5-`.
+No header row. Fields are comma-separated and **not quoted**. The last
+field (message, value, or argument list) can contain commas, so take it
+with `cut -f6-` (events) or `-f5-` (channels, commands).
 
 ```text
 event.log    time,raw_time,Component.instance.EventName,event_id,EventSeverity.<SEV>,message
