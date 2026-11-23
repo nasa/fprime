@@ -91,15 +91,14 @@ void WasmSequencer ::configure(const Config& cfg, Fw::MemAllocator& mallocator) 
         // Allocate the heap page list
         {
             FwSizeType actualSize = sizeof(U8*) * this->m_config.heapPages;
-            auto ptr = mallocator.checkedAllocate(0, actualSize);
+            auto ptr = mallocator.checkedAllocate(MEM_ID_HEAP_PAGE_LIST, actualSize);
             this->m_heapPages = reinterpret_cast<U8**>(ptr);
         }
 
         // Allocate each heap page
         for (FwSizeType i = 0; i < this->m_config.heapPages; i++) {
             auto actualSize = Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE;
-            auto ptr =
-                mallocator.checkedAllocate(static_cast<FwIndexType>(i) + 1, actualSize, SPACEWASM_MEMORY_ALIGNMENT);
+            auto ptr = mallocator.checkedAllocate(heapPageMemId(i), actualSize, SPACEWASM_MEMORY_ALIGNMENT);
             this->m_heapPages[i] = reinterpret_cast<U8*>(ptr);
         }
         this->m_heapPagesUsed = 0;
@@ -108,8 +107,7 @@ void WasmSequencer ::configure(const Config& cfg, Fw::MemAllocator& mallocator) 
     // Allocate the guest memory pool
     {
         auto actualSize = this->m_config.guestMemorySize;
-        auto ptr = mallocator.checkedAllocate(static_cast<FwIndexType>(this->m_config.heapPages) + 1, actualSize,
-                                              SPACEWASM_MEMORY_ALIGNMENT);
+        auto ptr = mallocator.checkedAllocate(MEM_ID_GUEST_POOL, actualSize, SPACEWASM_MEMORY_ALIGNMENT);
         this->m_guestPoolOffset = 0;
         this->m_guestPool = reinterpret_cast<U8*>(ptr);
     }
@@ -117,7 +115,7 @@ void WasmSequencer ::configure(const Config& cfg, Fw::MemAllocator& mallocator) 
     // Allocate the serialOut buffer
     if (this->m_config.serialOutMax > 0) {
         auto actualSize = this->m_config.serialOutMax;
-        auto ptr = mallocator.checkedAllocate(static_cast<FwIndexType>(this->m_config.heapPages) + 2, actualSize);
+        auto ptr = mallocator.checkedAllocate(MEM_ID_SERIAL_OUT, actualSize);
         this->m_serialOutBuffer.setExtBuffer(reinterpret_cast<U8*>(ptr), actualSize);
     }
 
@@ -127,8 +125,7 @@ void WasmSequencer ::configure(const Config& cfg, Fw::MemAllocator& mallocator) 
         for (FwIndexType i = 0; i < NUM_SERIALIN_INPUT_PORTS; i++) {
             if (this->m_config.serialIn[i].size > 0) {
                 auto actualSize = this->m_config.serialIn[i].size;
-                auto ptr =
-                    mallocator.checkedAllocate(static_cast<FwIndexType>(this->m_config.heapPages) + 3 + i, actualSize);
+                auto ptr = mallocator.checkedAllocate(serialInMemId(i), actualSize);
                 this->m_serialInQueue[i].setup(reinterpret_cast<U8*>(ptr), actualSize);
             }
         }
@@ -136,15 +133,14 @@ void WasmSequencer ::configure(const Config& cfg, Fw::MemAllocator& mallocator) 
 
     // Allocate the module-load validator scratch storage
     {
-        const FwIndexType decoderId = static_cast<FwIndexType>(this->m_config.heapPages) + 3 + NUM_SERIALIN_INPUT_PORTS;
         if (this->m_config.decoderControlFrames > 0) {
             FwSizeType actualSize = sizeof(spacewasm_control_frame_t) * this->m_config.decoderControlFrames;
-            auto ptr = mallocator.checkedAllocate(decoderId, actualSize, alignof(spacewasm_control_frame_t));
+            auto ptr = mallocator.checkedAllocate(MEM_ID_DECODER_CONTROL_FRAMES, actualSize, alignof(spacewasm_control_frame_t));
             this->m_decoderControlFrames = reinterpret_cast<spacewasm_control_frame_t*>(ptr);
         }
         if (this->m_config.decoderOperands > 0) {
             FwSizeType actualSize = sizeof(spacewasm_operand_t) * this->m_config.decoderOperands;
-            auto ptr = mallocator.checkedAllocate(decoderId + 1, actualSize, alignof(spacewasm_operand_t));
+            auto ptr = mallocator.checkedAllocate(MEM_ID_DECODER_OPERANDS, actualSize, alignof(spacewasm_operand_t));
             this->m_decoderOperands = reinterpret_cast<spacewasm_operand_t*>(ptr);
         }
     }
@@ -152,6 +148,16 @@ void WasmSequencer ::configure(const Config& cfg, Fw::MemAllocator& mallocator) 
     // Allocate the initial store
     this->m_allocator = &mallocator;
     this->createStore();
+}
+
+FwEnumStoreType WasmSequencer ::serialInMemId(FwIndexType portNum) {
+    FW_ASSERT(portNum >= 0 && portNum < NUM_SERIALIN_INPUT_PORTS, static_cast<FwAssertArgType>(portNum));
+    return static_cast<FwEnumStoreType>(MEM_ID_SERIAL_IN_BASE + portNum);
+}
+
+FwEnumStoreType WasmSequencer ::heapPageMemId(FwSizeType page) {
+    FW_ASSERT(page < Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES, static_cast<FwAssertArgType>(page));
+    return static_cast<FwEnumStoreType>(MEM_ID_HEAP_PAGE_BASE + page);
 }
 
 void WasmSequencer ::deinit() {
@@ -162,40 +168,37 @@ void WasmSequencer ::deinit() {
     if (this->m_allocator != nullptr) {
         // Deallocate each heap page
         for (FwSizeType i = 0; i < this->m_config.heapPages; i++) {
-            this->m_allocator->deallocate(static_cast<FwIndexType>(i) + 1, this->m_heapPages[i]);
+            this->m_allocator->deallocate(heapPageMemId(i), this->m_heapPages[i]);
             this->m_heapPages[i] = nullptr;
         }
 
         // Deallocate the heap page pool
-        this->m_allocator->deallocate(0, this->m_heapPages);
+        this->m_allocator->deallocate(MEM_ID_HEAP_PAGE_LIST, this->m_heapPages);
 
         // Deallocate the guest memory pool
         if (this->m_guestPool != nullptr) {
-            this->m_allocator->deallocate(static_cast<FwIndexType>(this->m_config.heapPages) + 1, this->m_guestPool);
+            this->m_allocator->deallocate(MEM_ID_GUEST_POOL, this->m_guestPool);
         }
 
         // Deallocate the serialOut buffer
         if (this->m_serialOutBuffer.getBuffAddr() != nullptr) {
-            this->m_allocator->deallocate(static_cast<FwIndexType>(this->m_config.heapPages) + 2,
-                                          this->m_serialOutBuffer.getBuffAddr());
+            this->m_allocator->deallocate(MEM_ID_SERIAL_OUT, this->m_serialOutBuffer.getBuffAddr());
         }
 
         // Deallocate the serialIn queues
         for (FwIndexType i = 0; i < NUM_SERIALIN_INPUT_PORTS; i++) {
             if (this->m_serialInQueue[i].get_capacity() > 0) {
-                this->m_allocator->deallocate(static_cast<FwIndexType>(this->m_config.heapPages) + 3 + i,
-                                              this->m_serialInQueue[i].get_buffer());
+                this->m_allocator->deallocate(serialInMemId(i), this->m_serialInQueue[i].get_buffer());
             }
         }
 
         // Deallocate the module-load validator scratch storage
-        const FwIndexType decoderId = static_cast<FwIndexType>(this->m_config.heapPages) + 3 + NUM_SERIALIN_INPUT_PORTS;
         if (this->m_decoderControlFrames != nullptr) {
-            this->m_allocator->deallocate(decoderId, this->m_decoderControlFrames);
+            this->m_allocator->deallocate(MEM_ID_DECODER_CONTROL_FRAMES, this->m_decoderControlFrames);
             this->m_decoderControlFrames = nullptr;
         }
         if (this->m_decoderOperands != nullptr) {
-            this->m_allocator->deallocate(decoderId + 1, this->m_decoderOperands);
+            this->m_allocator->deallocate(MEM_ID_DECODER_OPERANDS, this->m_decoderOperands);
             this->m_decoderOperands = nullptr;
         }
     }

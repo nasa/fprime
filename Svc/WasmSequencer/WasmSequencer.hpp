@@ -878,6 +878,25 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     static U8* guestReallocCallback(void* userdata, U8* ptr, size_t old_size, size_t new_size, size_t align);
     static void guestDeallocCallback(void* userdata, U8* ptr, size_t size, size_t align);
 
+    //! Memory allocator identifiers for each allocation made in configure().
+    //! Fixed-count allocations come first; the variable-count serialIn queues
+    //! and heap pages are indexed from their respective base identifiers.
+    enum MemoryId : FwEnumStoreType {
+        MEM_ID_HEAP_PAGE_LIST = 0,
+        MEM_ID_GUEST_POOL,
+        MEM_ID_SERIAL_OUT,
+        MEM_ID_DECODER_CONTROL_FRAMES,
+        MEM_ID_DECODER_OPERANDS,
+        MEM_ID_SERIAL_IN_BASE,
+        MEM_ID_HEAP_PAGE_BASE = MEM_ID_SERIAL_IN_BASE + NUM_SERIALIN_INPUT_PORTS,
+    };
+
+    //! Memory allocator identifier for the serialIn queue on the given port
+    static FwEnumStoreType serialInMemId(FwIndexType portNum);
+
+    //! Memory allocator identifier for the given heap page
+    static FwEnumStoreType heapPageMemId(FwSizeType page);
+
     //! Create a fresh interpreter store with the given module capacity,
     //! destroying any existing store first.
     void createStore();
