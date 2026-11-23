@@ -79,10 +79,14 @@ bool CircularState::addInfinite(const U8* buffer, FwSizeType size) {
 }
 
 bool CircularState::peek(U8*& buffer, FwSizeType size, FwSizeType offset) {
-    FwSizeType final_offset = m_infinite_read + offset;
-    if ((final_offset + size) > m_infinite_write) {
+    // Overflow-safe range check: (m_infinite_read + offset + size) can wrap
+    // for very large offsets. m_infinite_read never exceeds m_infinite_write,
+    // so the subtractions below cannot underflow.
+    if (offset > m_infinite_write - m_infinite_read ||
+        size > m_infinite_write - m_infinite_read - offset) {
         return false;
     }
+    FwSizeType final_offset = m_infinite_read + offset;
     buffer = m_infinite_store + final_offset;
     return true;
 }
