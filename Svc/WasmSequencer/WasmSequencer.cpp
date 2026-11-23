@@ -135,7 +135,8 @@ void WasmSequencer ::configure(const Config& cfg, Fw::MemAllocator& mallocator) 
     {
         if (this->m_config.decoderControlFrames > 0) {
             FwSizeType actualSize = sizeof(spacewasm_control_frame_t) * this->m_config.decoderControlFrames;
-            auto ptr = mallocator.checkedAllocate(MEM_ID_DECODER_CONTROL_FRAMES, actualSize, alignof(spacewasm_control_frame_t));
+            auto ptr = mallocator.checkedAllocate(MEM_ID_DECODER_CONTROL_FRAMES, actualSize,
+                                                  alignof(spacewasm_control_frame_t));
             this->m_decoderControlFrames = reinterpret_cast<spacewasm_control_frame_t*>(ptr);
         }
         if (this->m_config.decoderOperands > 0) {
