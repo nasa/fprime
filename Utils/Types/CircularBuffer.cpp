@@ -122,7 +122,8 @@ Fw::SerializeStatus CircularBuffer ::peek(char& value, FwSizeType offset) const 
 Fw::SerializeStatus CircularBuffer ::peek(U8& value, FwSizeType offset) const {
     FW_ASSERT(m_store != nullptr && m_store_size != 0);  // setup method was called
     // Check there is sufficient data
-    if ((sizeof(U8) + offset) > m_allocated_size) {
+    // Note: do not compute (sizeof(U8) + offset) directly, as it can overflow
+    if (offset > m_allocated_size || sizeof(U8) > m_allocated_size - offset) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
     const FwSizeType idx = advance_idx(m_head_idx, offset);
@@ -134,7 +135,8 @@ Fw::SerializeStatus CircularBuffer ::peek(U8& value, FwSizeType offset) const {
 Fw::SerializeStatus CircularBuffer ::peek(U32& value, FwSizeType offset) const {
     FW_ASSERT(m_store != nullptr && m_store_size != 0);  // setup method was called
     // Check there is sufficient data
-    if ((sizeof(U32) + offset) > m_allocated_size) {
+    // Note: do not compute (sizeof(U32) + offset) directly, as it can overflow
+    if (offset > m_allocated_size || sizeof(U32) > m_allocated_size - offset) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
     value = 0;
@@ -153,7 +155,8 @@ Fw::SerializeStatus CircularBuffer ::peek(U8* buffer, FwSizeType size, FwSizeTyp
     FW_ASSERT(m_store != nullptr && m_store_size != 0);  // setup method was called
     FW_ASSERT(buffer != nullptr);
     // Check there is sufficient data
-    if ((size + offset) > m_allocated_size) {
+    // Note: do not compute (size + offset) directly, as it can overflow
+    if (offset > m_allocated_size || size > m_allocated_size - offset) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
     FwSizeType idx = advance_idx(m_head_idx, offset);
@@ -170,7 +173,8 @@ template <typename T>
 Fw::SerializeStatus CircularBuffer ::peek_impl(T& serializable, FwSizeType size, FwSizeType offset) const {
     FW_ASSERT(m_store != nullptr && m_store_size != 0);  // setup method was called
     // Check there is sufficient data
-    if ((size + offset) > m_allocated_size) {
+    // Note: do not compute (size + offset) directly, as it can overflow
+    if (offset > m_allocated_size || size > m_allocated_size - offset) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
     const FwSizeType idx = advance_idx(m_head_idx, offset);
