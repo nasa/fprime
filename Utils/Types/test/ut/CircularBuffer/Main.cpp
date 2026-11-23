@@ -16,6 +16,7 @@
 
 #include <cmath>
 #include <cstdio>
+#include <limits>
 
 #define STEP_COUNT 1000
 
@@ -204,6 +205,34 @@ TEST(CircularBufferTests, BoundaryCases) {
     // Serialize a max size buffer
     state.setRandom(MAX_BUFFER_SIZE, 0, 0);
     serializeOk.apply(state);
+}
+
+/**
+ * Test that peeks with huge offsets are rejected, even when the
+ * (size + offset) range check would overflow. Regression test for #6412.
+ */
+TEST(CircularBufferTests, PeekOverflowOffsetTest) {
+    // Serialize 4 bytes so the buffer is non-empty
+    MockTypes::CircularState state;
+    U8 data[4] = {0x11, 0x22, 0x33, 0x44};
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, state.getTestBuffer().serialize(data, sizeof(data)));
+    state.setRemainingSize(MAX_BUFFER_SIZE - sizeof(data));
+
+    // Offsets chosen so (size + offset) wraps to a small value on the old check
+    const FwSizeType max_offset = std::numeric_limits<FwSizeType>::max();
+    U8 peek_u8 = 0;
+    ASSERT_EQ(state.getTestBuffer().peek(peek_u8, max_offset), Fw::FW_DESERIALIZE_BUFFER_EMPTY);
+    U32 peek_u32 = 0;
+    ASSERT_EQ(state.getTestBuffer().peek(peek_u32, max_offset), Fw::FW_DESERIALIZE_BUFFER_EMPTY);
+    U8 peek_buffer[2] = {};
+    ASSERT_EQ(state.getTestBuffer().peek(peek_buffer, sizeof(peek_buffer), max_offset - 1),
+              Fw::FW_DESERIALIZE_BUFFER_EMPTY);
+    // The reference model must reject the same request
+    U8* model_buffer = nullptr;
+    ASSERT_FALSE(state.peek(model_buffer, sizeof(peek_buffer), max_offset - 1));
+    // Sanity: an in-range peek still works
+    ASSERT_EQ(state.getTestBuffer().peek(peek_u8, 0), Fw::FW_SERIALIZE_OK);
+    ASSERT_EQ(peek_u8, 0x11);
 }
 
 int main(int argc, char* argv[]) {
