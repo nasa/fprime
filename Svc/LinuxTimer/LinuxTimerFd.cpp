@@ -67,6 +67,12 @@ void LinuxTimer::startTimer(const Fw::TimeInterval& interval) {
             (void)::close(fd);
             return;
         }
+        if (-1 == ret) {
+            // The read was interrupted by a signal (EINTR) before consuming a timer expiration,
+            // so no tick is due. Retry the read without emitting CycleOut. (A non-EINTR failure
+            // has already returned above, so ret == -1 here implies EINTR.)
+            continue;
+        }
         Os::RawTime::Status rawTimeStatus = this->m_rawTime.now();
         if ((rawTimeStatus != Os::RawTime::Status::OP_OK) && !this->m_rawTimeErrorLogged) {
             // Latch the report so a persistent failure does not flood the console at the timer rate
