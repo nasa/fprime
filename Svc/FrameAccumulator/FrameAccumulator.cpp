@@ -136,7 +136,10 @@ void FrameAccumulator ::processRing(const ComCfg::FrameContext& context) {
             FW_ASSERT(size_out <= remaining, static_cast<FwAssertArgType>(size_out),
                       static_cast<FwAssertArgType>(remaining));
             Fw::Buffer buffer = this->bufferAllocate_out(0, size_out);
-            if (buffer.isValid()) {
+            // A provider may return a valid buffer smaller than the requested frame; peeking
+            // size_out bytes into it would write past the allocation, so treat an undersized
+            // buffer exactly like an unavailable one
+            if (buffer.isValid() && buffer.getCapacity() >= size_out) {
                 // Copy data out of ring buffer into the allocated buffer
                 Fw::SerializeStatus serialize_status = this->m_inRing.peek(buffer.getData(), size_out);
                 buffer.setSize(size_out);
@@ -149,7 +152,7 @@ void FrameAccumulator ::processRing(const ComCfg::FrameContext& context) {
                           static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(size_out));
                 this->dataOut_out(0, buffer, context);
             } else {
-                // No buffer is available
+                // No buffer is available, or the returned buffer is too small for the frame
                 this->log_WARNING_HI_NoBufferAvailable();
                 // In the case where no buffer is available and the circular buffer is full, we have to drop the buffer
                 // as there is no other way to retry. Without dropping it, the back pressure would assert the
