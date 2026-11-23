@@ -7,17 +7,20 @@ description: Find and parse the logs written by the F Prime GDS (fprime-gds, fpr
 
 ## 1. Where logs are
 
-Every GDS tool invocation creates its own run directory
+Each GDS tool invocation logs to a run directory
 `<logs>/<tool>-<YYYY_MM_DD-HH_MM_SS>/`, where `<tool>` is `fprime-gds`,
 `fprime-cli`, or `pytest` (integration tests). `<logs>` is `-l/--logs`,
 default `./logs` under the directory the tool was started from.
-Newest run: `ls -dt logs/*/ | head -1`.
+Invocations started in the same second share a directory and append to
+the same files. Newest run: `ls -dt logs/*/ | head -1`.
 
 **Logs are per client, not per session.** Each directory holds only
 what that process sent and what it received while connected. A command
 sent with `fprime-cli` or by a test is in *that* tool's `command.log`,
 not in `fprime-gds-*/command.log` (which records GUI-sent commands
-only). To see everything, read across the sibling run directories.
+only). For events and telemetry read the longest-connected client
+(normally `fprime-gds-*`); for commands read every sibling
+`command.log`.
 
 ## 2. File map
 
@@ -27,11 +30,11 @@ only). To see everything, read across the sibling run directories.
 | `channel.log` | Telemetry channel updates received | CSV, §3 |
 | `command.log` | Commands sent by this client | CSV, §3 |
 | `<App>.log` (e.g. `Ref.log`) | stdout/stderr of the flight software the GDS launched: console event echo, asserts, OS warnings. Only in `fprime-gds-*`, absent with `-n` | text, §4 |
-| `recv.bin`, `sent.bin` | Raw bytes downlinked / uplinked | binary, do not grep |
+| `recv.bin`, `sent.bin` | Raw downlinked bytes; `sent.bin` is usually empty, so it does not tell whether a command was sent | binary, do not grep |
 | `fprime-gds.log`, `comm.py.log`, `__main__.py.log`, `fprime-cli.log`, `pytest.log`, `custom-data-handlers-app/` | Python logging of each GDS process (launcher, comm adapter, GUI server, CLI, test). Look here for connection and framing problems | `[date time,ms] [LEVEL] logger: msg` |
 | `<filename>.log` | One per downlinked file | Python logging |
-| `TestLog_<date>.xlsx` | Integration test API log (`pytest-*` only) | spreadsheet, §6 |
-| `bin/`, `dict/` | Copy of the deployment under test (`pytest-*` only) | — |
+| `TestLog_<date>.xlsx` | Integration test API log (`pytest-*` only) | spreadsheet, not greppable |
+| `bin/`, `dict/` | Copy of the deployment and dictionary under test (`pytest-*` only) | — |
 
 ## 3. CSV line formats
 
@@ -71,9 +74,14 @@ EVENT: (83894275) (2:1795470283,610893) WARNING_HI: (FileHandling.fileManager) F
 `EVENT: (id) (time_base:seconds,microseconds) SEVERITY: (instance) EventName : message`.
 It differs from `event.log`: epoch time only, instance and event name
 are split, and enum arguments show their number (`FORMAT_ERROR (3)`).
-It is the only place that has **events emitted before the GDS client
-connected** (boot events), assert text, and the reason the process
-exited. Non-event lines: `grep -v '^EVENT:' Ref.log`.
+The console echo bypasses the downlink, so it is the only place that
+has every event. An event here but not in `event.log` was emitted
+before the client connected (boot events), filtered on board
+(`SET_EVENT_FILTER`), or dropped (see the counter recipe in §5).
+It also holds assert text and how the process ended: a normal stop is
+`[WARNING] ReceiveTask failed to recv ...` then `Exiting...`.
+Non-event lines: `grep -v '^EVENT:' Ref.log`. Two events can share one
+line, so count with `grep -o 'EVENT: (' Ref.log | wc -l`.
 
 ## 5. Recipes
 
@@ -87,22 +95,26 @@ cut -d, -f5 event.log | sort | uniq -c
 # Events of one component instance, compact (time, name, message)
 grep ',Ref\.SG1\.' event.log | cut -d, -f1,3,6-
 
-# Commands that did not complete OK (anything but dispatched/completed)
+# Commands the dispatcher reported as failed
 grep -E 'cmdDisp\.(OpCodeError|MalformedCommand|InvalidCommand|TooManyCommands|CommandDroppedQueueOverflow)' event.log
 
-# Fate of one command: decimal opcode in command.log -> hex in events
-awk -F, '{printf "%s %s 0x%x %s\n", $1, $3, $4, $5}' command.log
+# Fate of one command: its events, then who sent it (hex -> decimal;
+# the directory names the tool)
 grep -E 'Opcode 0x5002003 ' event.log
+grep -H ",$((0x5002003))," ../*/command.log
 
-# One channel: time series, then latest value of every channel
+# One channel: time series, latest value
 grep ',Ref\.SG1\.Output,' channel.log | cut -d, -f1,5-
-awk -F, '{v=$5; for(i=6;i<=NF;i++) v=v","$i; last[$3]=v} END{for(c in last) print c" = "last[c]}' channel.log | sort
+grep ',Ref\.SG1\.Output,' channel.log | tail -1
+
+# On-board counters, last value: command errors, dropped events/commands
+awk -F, '/\.(CommandErrors|CommandsDispatched|CommandsDropped|EventsDropped),/{last[$3]=$5} END{for(c in last) print c, last[c]}' channel.log
 
 # Time window (ISO strings compare lexically)
 awk -F, '$1>="2026-11-23T21:44:40" && $1<"2026-11-23T21:44:45"' event.log
 
-# Merged timeline of commands (all clients) and events
-cat ../*/command.log event.log | sort -t, -k1,1 | cut -d, -f1,3,5-
+# Merged timeline of commands (all clients, hex opcode) and events
+{ awk -F, '{printf "%s,CMD 0x%x,%s,%s\n", $1, $4, $3, substr($0, index($0, ",[") + 1)}' ../*/command.log; cut -d, -f1,3,5- event.log; } | sort
 
 # GDS process errors (connection, framing, decoding)
 grep -rhE '\[(WARNING|ERROR|CRITICAL)\]' --include='*.log' .
@@ -110,25 +122,19 @@ grep -rhE '\[(WARNING|ERROR|CRITICAL)\]' --include='*.log' .
 
 An event name or ID alone does not tell you its arguments or severity
 definition; look them up in the dictionary JSON
-(`build-artifacts/<platform>/<App>/dict/*TopologyDictionary.json`).
+(`pytest-*/dict/`, else
+`build-artifacts/<platform>/<App>/dict/*TopologyDictionary.json`).
 
-## 6. Integration test log (`TestLog_*.xlsx`)
-
-One sheet, columns `Log Time | Case ID | Sender | Message`; each test
-opens with `[STARTING CASE] <test name>`; assertions log
-`... assertion succeeded` or `... failed: <reason>`. Dump it to greppable text:
-
-```bash
-python3 -c "import sys,openpyxl; [print(*r, sep=' | ') for r in openpyxl.load_workbook(sys.argv[1]).active.iter_rows(values_only=True)]" TestLog_*.xlsx
-```
-
-## 7. Gotchas
+## 6. Gotchas
 
 - Empty `command.log` in `fprime-gds-*` is normal when commands came
   from the CLI or a test. Commands run by an on-board sequence appear in
   no `command.log`; only their `OpCodeDispatched` events show them.
+- A component can refuse a command with a `WARNING_*` event and still
+  report `OpCodeCompleted`; read the warnings between a command's
+  dispatch and completion.
 - `event.log` and `channel.log` start when that client connected and
-  miss boot events; use `<App>.log` for those.
+  can miss boot events; use `<App>.log` for those.
 - A zero-byte `event.log` in a short `fprime-cli-*` run means the tool
   exited before anything arrived, not that nothing happened.
 - Each severity is one token, so `WARNING` alone also matches message
