@@ -33,7 +33,6 @@ only). For events and telemetry read the longest-connected client
 | `recv.bin`, `sent.bin` | Raw downlinked bytes; `sent.bin` is usually empty, so it does not tell whether a command was sent | binary, do not grep |
 | `fprime-gds.log`, `comm.py.log`, `__main__.py.log`, `fprime-cli.log`, `pytest.log`, `custom-data-handlers-app/` | Python logging of each GDS process (launcher, comm adapter, GUI server, CLI, test). Look here for connection and framing problems | `[date time,ms] [LEVEL] logger: msg` |
 | `<filename>.log` | One per downlinked file | Python logging |
-| `TestLog_<date>.xlsx` | Integration test API log (`pytest-*` only) | spreadsheet, not greppable |
 | `bin/`, `dict/` | Copy of the deployment and dictionary under test (`pytest-*` only) | — |
 
 ## 3. CSV line formats
