@@ -9,8 +9,9 @@ description: Locate and parse F Prime GDS logs (event.log, channel.log, command.
 
 Each GDS tool invocation logs to a run directory
 `<logs>/<tool>-<YYYY_MM_DD-HH_MM_SS>/`, where `<tool>` is `fprime-gds`,
-`fprime-cli`, or `pytest` (integration tests). `<logs>` is `-l/--logs`,
-default `./logs` under the directory the tool was started from.
+`fprime-cli`, or `pytest` (integration tests) unless `--log-prefix`
+changes it. `<logs>` is `-l/--logs`, default `./logs` under the
+directory the tool was started from.
 Invocations started in the same second share a directory and append to
 the same files; with `--log-directly` files go into `<logs>` itself.
 Newest GDS session: `ls -dt logs/fprime-gds-*/ | head -1`.
@@ -21,7 +22,8 @@ sent with `fprime-cli` or by a test is in *that* tool's `command.log`,
 not in `fprime-gds-*/command.log` (which records GUI-sent commands
 only). For events and telemetry read the longest-connected client
 (normally `fprime-gds-*`); for commands read every sibling
-`command.log`.
+`command.log`. Nothing names the session a client belonged to: it is
+the newest `fprime-gds-*` started before it.
 
 ## 2. File map
 
@@ -33,7 +35,7 @@ only). For events and telemetry read the longest-connected client
 | `<App>.log` (e.g. `Ref.log`) | stdout/stderr of the flight software the GDS launched: console event echo, asserts, OS warnings. Only in `fprime-gds-*`, absent with `-n` | text, §4 |
 | `recv.bin`, `sent.bin` | Packets received; `sent.bin` is usually empty, so it does not tell whether a command was sent | binary, do not grep |
 | `fprime-gds.log`, `comm.py.log`, `__main__.py.log`, `fprime-cli.log`, `pytest.log`, `<plugin>/-c.log` | Python logging of each GDS process (launcher, comm adapter, GUI server, CLI, test, plugins). Usually start-up INFO lines only | `[date time,ms] [LEVEL] logger: msg` |
-| `<destination file>.log` | Packet trace of one file downlink (`fprime-gds-*` only) | text |
+| `<destination file>.log` | Packet trace of one file downlink (`fprime-gds-*` only, copy under `<plugin>/`) | text |
 | `bin/`, `dict/` | Copy of the deployment and dictionary under test (`pytest-*` only) | — |
 
 ## 3. CSV line formats
@@ -63,9 +65,9 @@ command.log  time,raw_time,Component.instance.COMMAND,opcode,[arg, ...]
 - IDs and opcodes are decimal. `cmdDisp` messages print opcodes in hex
   (`Opcode 0x5002003`), sequencer messages in decimal
   (`opcode 83894275`).
-- Channel `value` carries its unit when the dictionary has a format
-  string (`217 us`); arrays and structs print as Python literals
-  (`['12', '1']`, `{'type': 'SQUARE', ...}`).
+- Channels are logged on change, about once per second: a single
+  sample means the value never changed, and the last sample can lag a
+  crash.
 
 ## 4. Flight software console log (`<App>.log`)
 
@@ -76,15 +78,18 @@ EVENT: (83894275) (2:1795470283,610893) WARNING_HI: (FileHandling.fileManager) F
 `EVENT: (id) (time_base:seconds,microseconds) SEVERITY: (instance) EventName : message`.
 It differs from `event.log`: epoch time only, instance and event name
 are split, and enum arguments show their number (`FORMAT_ERROR (3)`).
-The console echo bypasses the downlink, so it is the only place that
-has every event. An event here but not in `event.log` was emitted
+The console echo bypasses the downlink, so it has every event except a
+FATAL. An event here but not in `event.log` was emitted
 before the client connected (boot events), filtered on board
 (`SET_EVENT_FILTER`), or dropped (see the counter recipe in §5).
 It also shows how the process ended. A normal stop is
-`[WARNING] ReceiveTask failed to recv ...` then `Exiting...`. A FATAL
-prints no `EVENT:` line and may never reach `event.log`: look for
-`Assert: "<file>:<line>" <args>`, `FATAL <decimal event id> handled.`
-and `Exiting with abort signal`.
+`[WARNING] ReceiveTask failed to recv ...` then `Exiting...`. A crash
+ends with `FATAL <decimal event id> handled.` and
+`Exiting with abort signal`. An assert also prints
+`Assert: "<file>:<line>" <args>` first and usually reaches `event.log`
+as `fatalAdapter.AF_ASSERT_<n>`. A FATAL event prints only its ID and
+may never reach `event.log`: look the ID up under events in the
+dictionary (the same number can be an unrelated opcode).
 Non-event lines: `grep -v '^EVENT:' Ref.log`. Two events can share one
 line, so count with `grep -o 'EVENT: (' Ref.log | wc -l`.
 
@@ -109,21 +114,16 @@ grep -E 'cmdDisp\.(OpCodeError|MalformedCommand|InvalidCommand|TooManyCommands|C
 grep -E 'Opcode 0x5002003 ' event.log
 grep -H ",$((0x5002003))," ../*/command.log
 
-# One channel: time series, latest value
+# One channel: time series (add `| tail -1` for the latest value)
 grep ',Ref\.SG1\.Output,' channel.log | cut -d, -f1,5-
-grep ',Ref\.SG1\.Output,' channel.log | tail -1
 
-# On-board counters, last value: command errors, dropped events/commands
+# On-board counters, last value: command errors, dropped events/commands.
+# CommandsDispatched includes sequence commands; for an exact count use
+# grep -c OpCodeDispatched event.log
 awk -F, '/\.(CommandErrors|CommandsDispatched|CommandsDropped|EventsDropped),/{last[$3]=$5} END{for(c in last) print c, last[c]}' channel.log
-
-# Time window (ISO strings compare lexically)
-awk -F, '$1>="2026-11-23T21:44:40" && $1<"2026-11-23T21:44:45"' event.log
 
 # Merged timeline of commands (all clients, hex opcode) and events
 { awk -F, '{printf "%s,CMD 0x%x,%s,%s\n", $1, $4, $3, substr($0, index($0, ",[") + 1)}' ../*/command.log; cut -d, -f1,3,5- event.log; } | sort
-
-# GDS process warnings and errors, with the file that logged them
-grep -rE '\[(WARNING|ERROR|CRITICAL)\]' --include='*.log' .
 ```
 
 An event name or ID alone does not tell you its arguments or severity
@@ -141,11 +141,14 @@ definition; look them up in the dictionary JSON
 - A component can refuse a command with a `WARNING_*` event and still
   report `OpCodeCompleted`; read the warnings between a command's
   dispatch and completion.
+- A dispatch with no `command.log` line came from a sequence, or from a
+  client that logged elsewhere (`--log-directly`) or not at all
+  (`--disable-data-logging`, which leaves only the tool's Python log).
+  A command sent after the flight software died is still in
+  `command.log`; only the missing `OpCodeDispatched` shows it.
 - `event.log` and `channel.log` start when that client connected and
   can miss boot events; use `<App>.log` for those.
 - A `channel.log` that stops growing means the flight software died or
   disconnected; the GDS process logs say nothing about it.
 - A zero-byte `event.log` in a short `fprime-cli-*` run means the tool
   exited before anything arrived, not that nothing happened.
-- `--disable-data-logging` suppresses `event.log`, `channel.log`,
-  `command.log`, `recv.bin`, and `sent.bin` entirely.
