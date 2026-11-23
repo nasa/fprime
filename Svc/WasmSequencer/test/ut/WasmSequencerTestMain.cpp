@@ -4168,23 +4168,13 @@ TEST_F(WasmSequencerConfigTester, DecoderOperandsExactFitLoads) {
     ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 518, Fw::CmdResponse::OK);
 }
 
-TEST_F(WasmSequencerConfigTester, ZeroDecoderOperandsRejectLoadGracefully) {
+TEST_F(WasmSequencerConfigTester, ZeroDecoderOperandsAsserts) {
     REQUIREMENT("WASM-SEQ-003");
     // Zero operand slots leaves the operand storage unallocated (null, length 0). A module that
     // pushes any operand is rejected with ERR_OUT_OF_MEMORY instead of dereferencing the null storage.
     WasmSequencer::Config cfg = this->standardConfig();
     cfg.maxDecoderOperands = 0;
-    this->configureWith(cfg);
-    this->clearHistory();
-
-    StagedAsset file_asset(*this, "deep_operands.wasm");
-    this->sendCmd_LOAD(0, 516, file_asset.file(), Fw::CmdStringArg(""));
-    this->dispatchAll();
-
-    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
-    ASSERT_EVENTS_ModuleLoadFailed_SIZE(1);
-    ASSERT_EVENTS_ModuleLoadFailed(0, WasmSequencer_Status::ERR_OUT_OF_MEMORY);
-    ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 516, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_DEATH_IF_SUPPORTED(this->configureWith(cfg), "Assert: ");
 }
 
 TEST_F(WasmSequencerConfigTester, ZeroDecoderControlFramesAsserts) {
