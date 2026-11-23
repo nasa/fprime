@@ -22,7 +22,7 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 LinuxTimerTester ::LinuxTimerTester()
-    : LinuxTimerGTestBase("Tester", MAX_HISTORY_SIZE), component("LinuxTimer"), m_numCalls(0) {
+    : LinuxTimerGTestBase("Tester", MAX_HISTORY_SIZE), component("LinuxTimer"), m_numCalls(0), m_tickCount(0) {
     this->initComponents();
     this->connectPorts();
 }
@@ -38,12 +38,23 @@ void LinuxTimerTester ::runCycles() {
     this->component.startTimer(Fw::TimeInterval(1, 0));
 }
 
+void LinuxTimerTester ::runInterruptedRead() {
+    this->m_numCalls = 1;
+    this->m_tickCount = 0;
+    this->component.startTimer(Fw::TimeInterval(1, 0));
+}
+
+U32 LinuxTimerTester ::getTickCount() const {
+    return this->m_tickCount.load();
+}
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
 void LinuxTimerTester ::from_CycleOut_handler(const FwIndexType portNum, Os::RawTime& cycleStart) {
     printf("TICK\n");
+    ++this->m_tickCount;
 
     if (--this->m_numCalls == 0) {
         this->component.quit();
