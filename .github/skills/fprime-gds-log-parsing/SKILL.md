@@ -23,7 +23,8 @@ not in `fprime-gds-*/command.log` (which records GUI-sent commands
 only). For events and telemetry read the longest-connected client
 (normally `fprime-gds-*`); for commands read every sibling
 `command.log`. Nothing names the session a client belonged to: it is
-the newest `fprime-gds-*` started before it.
+the newest `fprime-gds-*` with an `event.log` started before it (one
+holding only `fprime-gds.log` is a failed launch).
 
 ## 2. File map
 
@@ -64,10 +65,11 @@ command.log  time,raw_time,Component.instance.COMMAND,opcode,[arg, ...]
   `WARNING_HI`, `FATAL`, `DIAGNOSTIC`.
 - IDs and opcodes are decimal. `cmdDisp` messages print opcodes in hex
   (`Opcode 0x5002003`), sequencer messages in decimal
-  (`opcode 83894275`).
-- Channels are logged on change, about once per second: a single
-  sample means the value never changed, and the last sample can lag a
-  crash.
+  (`opcode 83894275`) with a numeric result (`error 4` is
+  `EXECUTION_ERROR`, `error 3` is `FORMAT_ERROR`).
+- A channel is logged each time the flight software sends it (about
+  1 Hz, only if written since the last send): a single sample means it
+  was written once, and the last sample can lag a crash.
 
 ## 4. Flight software console log (`<App>.log`)
 
@@ -110,7 +112,8 @@ grep ',Ref\.SG1\.' event.log | cut -d, -f1,3,6-
 grep -E 'cmdDisp\.(OpCodeError|MalformedCommand|InvalidCommand|TooManyCommands|CommandDroppedQueueOverflow)' event.log
 
 # Fate of one command: its events, then who sent it (hex -> decimal;
-# the directory names the tool)
+# the directory names the tool). ../* spans all sessions and misses
+# --log-directly directories: add their path.
 grep -E 'Opcode 0x5002003 ' event.log
 grep -H ",$((0x5002003))," ../*/command.log
 
@@ -139,8 +142,9 @@ definition; look them up in the dictionary JSON
   `CS_CommandComplete` / `CS_CommandError` events. File uplinks are in
   no `command.log` either, only in `fileUplink` events.
 - A component can refuse a command with a `WARNING_*` event and still
-  report `OpCodeCompleted`; read the warnings between a command's
-  dispatch and completion.
+  report `OpCodeCompleted`; read the events from just before a
+  command's dispatch (a handler's events can precede
+  `OpCodeDispatched` by microseconds) to its completion.
 - A dispatch with no `command.log` line came from a sequence, or from a
   client that logged elsewhere (`--log-directly`) or not at all
   (`--disable-data-logging`, which leaves only the tool's Python log).
@@ -149,6 +153,7 @@ definition; look them up in the dictionary JSON
 - `event.log` and `channel.log` start when that client connected and
   can miss boot events; use `<App>.log` for those.
 - A `channel.log` that stops growing means the flight software died or
-  disconnected; the GDS process logs say nothing about it.
+  disconnected; the GDS process logs say nothing about it, and with
+  `-n` (no `<App>.log`) the cause is not in the logs.
 - A zero-byte `event.log` in a short `fprime-cli-*` run means the tool
   exited before anything arrived, not that nothing happened.
