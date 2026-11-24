@@ -268,9 +268,15 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
 
     WasmFileReader reader(file);
 
+    spacewasm_decoder_stack_t decoderStack{};
+    decoderStack.control_frames = this->m_decoderControlFrames;
+    decoderStack.control_frames_len = static_cast<size_t>(this->m_config.maxDecoderControlFrames);
+    decoderStack.operands = this->m_decoderOperands;
+    decoderStack.operands_len = static_cast<size_t>(this->m_config.maxDecoderOperands);
+
     auto status =
         spacewasm_load_module(this->m_wasm, value.get_moduleName().toChar(), &WasmFileReader::readChunkCallback,
-                              &reader, this->m_guest_allocator, &moduleIndex);
+                              &reader, this->m_guest_allocator, decoderStack, &moduleIndex);
 
     next.set_moduleIdx(static_cast<WasmSequencer_ModuleIdx>(moduleIndex));
 

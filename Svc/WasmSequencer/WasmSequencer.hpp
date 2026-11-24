@@ -114,6 +114,21 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         //! Maximum number of Wasm modules that may be loaded into the sequencer's store.
         U8 maxGuestModules = 8;
 
+        //! Validator control-frame capacity used while loading a module. Bounds the block nesting depth
+        //! (block/loop/if) of any single function, counting the function body as one frame.
+        //! A deeper function fails to load with ERR_OUT_OF_MEMORY.
+        //! Must be > 0.
+        //! Costs `maxDecoderControlFrames * sizeof(spacewasm_control_frame_t)` bytes, allocated in configure().
+        FwSizeType maxDecoderControlFrames = 64;
+
+        //! Validator operand-stack capacity used while loading a module. Bounds the operand stack depth of any
+        //! single function.
+        //! A deeper function fails to load with ERR_OUT_OF_MEMORY.
+        //! Storage configured beyond 32767 is allocated but never used.
+        //! Must be > 0.
+        //! Costs `maxDecoderOperands * sizeof(spacewasm_operand_t)` bytes, allocated in configure().
+        FwSizeType maxDecoderOperands = 256;
+
         //! Size (in bytes) of the serialOut buffer used to copy a `serial_send` payload out of guest memory
         //! before invoking the connected serialOut port. A value of 0 leaves serialOut unconfigured (disabled
         //! serial_send).
@@ -127,7 +142,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     };
 
     //! [REQUIRED] Configure and allocate the dynamic backing pools for heap memory, guest memory, Wasm stack,
-    //! serialIn queues, and the serialOut buffer.
+    //! serialIn queues, the serialOut buffer, and the module-load validator scratch storage.
     void configure(const Config& cfg, Fw::MemAllocator& mallocator);
 
     //! Tear down the allocations made by `configure()`
@@ -868,6 +883,25 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     static U8* guestReallocCallback(void* userdata, U8* ptr, size_t old_size, size_t new_size, size_t align);
     static void guestDeallocCallback(void* userdata, U8* ptr, size_t size, size_t align);
 
+    //! Memory allocator identifiers for each allocation made in configure().
+    //! Fixed-count allocations come first; the variable-count serialIn queues
+    //! and heap pages are indexed from their respective base identifiers.
+    enum MemoryId : FwEnumStoreType {
+        MEM_ID_HEAP_PAGE_LIST = 0,
+        MEM_ID_GUEST_POOL,
+        MEM_ID_SERIAL_OUT,
+        MEM_ID_DECODER_CONTROL_FRAMES,
+        MEM_ID_DECODER_OPERANDS,
+        MEM_ID_SERIAL_IN_BASE,
+        MEM_ID_HEAP_PAGE_BASE = MEM_ID_SERIAL_IN_BASE + NUM_SERIALIN_INPUT_PORTS,
+    };
+
+    //! Memory allocator identifier for the serialIn queue on the given port
+    static FwEnumStoreType serialInMemId(FwIndexType portNum);
+
+    //! Memory allocator identifier for the given heap page
+    static FwEnumStoreType heapPageMemId(FwSizeType page);
+
     //! Create a fresh interpreter store with the given module capacity,
     //! destroying any existing store first.
     void createStore();
@@ -938,6 +972,11 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Current bump offset into `m_guestPool`.
     FwSizeType m_guestPoolOffset;
+
+    //! Validator scratch storage lent to spacewasm for the duration of each module load.
+    //! Sized by `m_config.maxDecoderControlFrames` and `m_config.maxDecoderOperands`.
+    spacewasm_control_frame_t* m_decoderControlFrames;
+    spacewasm_operand_t* m_decoderOperands;
 
     //! Opaque handle to the spacewasm engine, or null (before the store is initialized).
     spacewasm_t* m_wasm;

@@ -4088,6 +4088,124 @@ TEST_F(WasmSequencerConfigTester, SerialOutBufferSizeFromConfig) {
     ASSERT_EQ(this->serialOutCount, static_cast<U32>(0));
 }
 
+TEST_F(WasmSequencerConfigTester, DecoderControlFramesBoundBlockNesting) {
+    REQUIREMENT("WASM-SEQ-003");
+    // deep_blocks.wasm nests 16 blocks and so needs 17 validator control frames (the function body
+    // counts as one). One frame short, the load is rejected gracefully (ERR_OUT_OF_MEMORY, store
+    // rebuilt) rather than overrunning the scratch storage; a shallow module still loads afterwards
+    // on the rebuilt store.
+    WasmSequencer::Config cfg = this->standardConfig();
+    cfg.maxDecoderControlFrames = 16;
+    this->configureWith(cfg);
+    this->clearHistory();
+
+    StagedAsset deep_asset(*this, "deep_blocks.wasm");
+    this->sendCmd_LOAD(0, 510, deep_asset.file(), Fw::CmdStringArg(""));
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_ModuleLoadFailed_SIZE(1);
+    ASSERT_EVENTS_ModuleLoadFailed(0, WasmSequencer_Status::ERR_OUT_OF_MEMORY);
+    ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 510, Fw::CmdResponse::EXECUTION_ERROR);
+
+    StagedAsset empty_asset(*this, "empty.wasm");
+    this->sendCmd_LOAD(0, 511, empty_asset.file(), Fw::CmdStringArg(""));
+    this->dispatchAll();
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_CMD_RESPONSE(1, OPCODE_LOAD, 511, Fw::CmdResponse::OK);
+}
+
+TEST_F(WasmSequencerConfigTester, DecoderControlFramesExactFitLoads) {
+    REQUIREMENT("WASM-SEQ-003");
+    // Exactly the 17 control frames deep_blocks.wasm needs is enough to load it.
+    WasmSequencer::Config cfg = this->standardConfig();
+    cfg.maxDecoderControlFrames = 17;
+    this->configureWith(cfg);
+    this->clearHistory();
+
+    StagedAsset deep_asset(*this, "deep_blocks.wasm");
+    this->sendCmd_LOAD(0, 517, deep_asset.file(), Fw::CmdStringArg(""));
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_ModuleLoadFailed_SIZE(0);
+    ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 517, Fw::CmdResponse::OK);
+}
+
+TEST_F(WasmSequencerConfigTester, DecoderOperandsBoundOperandStack) {
+    REQUIREMENT("WASM-SEQ-003");
+    // deep_operands.wasm holds 40 operands live at once. One operand slot short, the load is
+    // rejected gracefully with ERR_OUT_OF_MEMORY.
+    WasmSequencer::Config cfg = this->standardConfig();
+    cfg.maxDecoderOperands = 39;
+    this->configureWith(cfg);
+    this->clearHistory();
+
+    StagedAsset file_asset(*this, "deep_operands.wasm");
+    this->sendCmd_LOAD(0, 512, file_asset.file(), Fw::CmdStringArg(""));
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_ModuleLoadFailed_SIZE(1);
+    ASSERT_EVENTS_ModuleLoadFailed(0, WasmSequencer_Status::ERR_OUT_OF_MEMORY);
+    ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 512, Fw::CmdResponse::EXECUTION_ERROR);
+}
+
+TEST_F(WasmSequencerConfigTester, DecoderOperandsExactFitLoads) {
+    REQUIREMENT("WASM-SEQ-003");
+    // Exactly the 40 operand slots deep_operands.wasm needs is enough to load it.
+    WasmSequencer::Config cfg = this->standardConfig();
+    cfg.maxDecoderOperands = 40;
+    this->configureWith(cfg);
+    this->clearHistory();
+
+    StagedAsset file_asset(*this, "deep_operands.wasm");
+    this->sendCmd_LOAD(0, 518, file_asset.file(), Fw::CmdStringArg(""));
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_ModuleLoadFailed_SIZE(0);
+    ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 518, Fw::CmdResponse::OK);
+}
+
+TEST_F(WasmSequencerConfigTester, ZeroDecoderOperandsAsserts) {
+    REQUIREMENT("WASM-SEQ-003");
+    // Zero operand slots is a misconfiguration; configure() rejects it up front with an assert
+    // instead of leaving the operand storage unallocated.
+    WasmSequencer::Config cfg = this->standardConfig();
+    cfg.maxDecoderOperands = 0;
+    ASSERT_DEATH_IF_SUPPORTED(this->configureWith(cfg), "Assert: ");
+}
+
+TEST_F(WasmSequencerConfigTester, ZeroDecoderControlFramesAsserts) {
+    REQUIREMENT("WASM-SEQ-003");
+    // Every function body needs one control frame, so zero frames could never load a module; configure()
+    // rejects the misconfiguration up front.
+    WasmSequencer::Config cfg = this->standardConfig();
+    cfg.maxDecoderControlFrames = 0;
+    ASSERT_DEATH_IF_SUPPORTED(this->configureWith(cfg), "Assert: ");
+}
+
+TEST_F(WasmSequencerConfigTester, DefaultDecoderLimitsLoadDeepModules) {
+    REQUIREMENT("WASM-SEQ-001");
+    // The default decoder limits (64 control frames / 256 operands, matching spacewasm's own
+    // defaults) accept both deep fixtures.
+    this->configureWith(this->standardConfig());
+    this->clearHistory();
+
+    StagedAsset blocks_asset(*this, "deep_blocks.wasm");
+    this->sendCmd_LOAD(0, 513, blocks_asset.file(), Fw::CmdStringArg("blocks"));
+    this->dispatchAll();
+    StagedAsset operands_asset(*this, "deep_operands.wasm");
+    this->sendCmd_LOAD(0, 514, operands_asset.file(), Fw::CmdStringArg("operands"));
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_ModuleLoadFailed_SIZE(0);
+    ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 513, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(1, OPCODE_LOAD, 514, Fw::CmdResponse::OK);
+}
+
 // Requirement: none (harness / non-requirement robustness check)
 TEST_F(WasmSequencerConfigTester, ConfigureTwiceAsserts) {
     // configure() is one-shot: a second call (which would leak the first pools and rebind a live
