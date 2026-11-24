@@ -24,11 +24,11 @@ TEST(Nominal, CiphertextAndMacMatch) {
     tester.testCiphertextAndMacMatch();
 }
 
-TEST(Nominal, AuthMaskLayout) {
+TEST(Nominal, AadLayout) {
     REQUIREMENT("SVC-CCSDS-AES-ENCRYPTOR-002");
-    COMMENT("The TM auth mask matches the ground segment's layout byte for byte");
+    COMMENT("The TM AAD matches the ground segment's layout byte for byte");
     Svc::Ccsds::AesGcmEncryptorTester tester;
-    tester.testAuthMaskLayout();
+    tester.testAadLayout();
 }
 
 TEST(Nominal, ContextVcIdIsAuthenticated) {

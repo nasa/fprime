@@ -11,9 +11,8 @@
 #include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 #include "Svc/Ccsds/Types/TMHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMTrailerSerializableAc.hpp"
-#include "Svc/Ccsds/Utils/SdlsAuthMask.hpp"
-
-#include <openssl/evp.h>
+#include "Svc/Ccsds/Utils/AesGcm/AesGcmCipher.hpp"
+#include "Svc/Ccsds/Utils/SdlsAad.hpp"
 
 namespace Svc {
 
@@ -86,20 +85,11 @@ class AesGcmEncryptor final : public AesGcmEncryptorComponentBase {
     //! If  m_outBuf is free for the next frame
     BufferOwnershipState m_bufferState;
 
-    //! AES-256-GCM implementation, fetched once at construction rather than per frame
-    EVP_CIPHER* m_cipher;
+    //! AES-256-GCM cipher, built once at construction and re-keyed per frame
+    Svc::Ccsds::Utils::AesGcmCipher m_cipher;
 
-    //! Cipher context, created once at construction and re-keyed per frame
-    EVP_CIPHER_CTX* m_ctx;
-
-    //! AAD for the VC and SA in m_aadVcId and m_aadSaIndex.
-    Svc::Ccsds::Utils::SdlsTmAuthMask m_aad;
-
-    //! Virtual channel m_aad was built for
-    U8 m_aadVcId;
-
-    //! Security association index m_aad was built for
-    U16 m_aadSaIndex;
+    //! AAD for the most recent VC and SA
+    Svc::Ccsds::Utils::SdlsAadCache<Svc::Ccsds::Utils::SdlsTmAad> m_aad;
 };
 
 }  // namespace Ccsds
