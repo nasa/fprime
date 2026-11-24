@@ -64,6 +64,21 @@ TEST(FileUplink, CancelPacketInDataMode) {
     tester.cancelPacketInDataMode();
 }
 
+TEST(FileUplink, TooShortPacket) {
+    Svc::FileUplinkTester tester;
+    tester.tooShortPacket();
+}
+
+TEST(FileUplink, DescriptorOnlyPacket) {
+    Svc::FileUplinkTester tester;
+    tester.descriptorOnlyPacket();
+}
+
+TEST(FileUplink, TruncatedBodyPacket) {
+    Svc::FileUplinkTester tester;
+    tester.truncatedBodyPacket();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
