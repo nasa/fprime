@@ -402,6 +402,11 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test Class 2 RX rejection of a FileData PDU whose offset and length overflow the offset space
     void testClass2RxFileDataOffsetOverflow();
 
+    //! Test a downlink whose source file is truncated mid-transfer fails instead of stalling
+    void testClass1TxSourceTruncated();
+    void testClass2TxSourceTruncated();
+    void runTxSourceTruncatedCase(Cfdp::Class::T cfdpClass, const char* srcFile);
+
     //! Test Class 2 RX handling of a truncated FileData PDU followed by a scheduler tick
     void testClass2RxTruncatedFileDataCrcSpin();
 

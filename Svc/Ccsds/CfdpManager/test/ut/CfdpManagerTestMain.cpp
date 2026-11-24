@@ -136,6 +136,16 @@ TEST(Transaction, Class2RxFileDataOffsetOverflow) {
     tester.testClass2RxFileDataOffsetOverflow();
 }
 
+TEST(Transaction, Class1TxSourceTruncated) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass1TxSourceTruncated();
+}
+
+TEST(Transaction, Class2TxSourceTruncated) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2TxSourceTruncated();
+}
+
 TEST(Transaction, Class2RxTruncatedFileDataCrcSpin) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testClass2RxTruncatedFileDataCrcSpin();

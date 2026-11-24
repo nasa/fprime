@@ -546,6 +546,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | TxZeroLengthFile | warning low | TX transaction cannot transfer zero-length file |
 | TxFileOpenFailed | warning low | TX transaction failed to open file |
 | TxFileSeekFailed | warning low | TX transaction failed to seek to beginning of file |
+| TxFileShortRead | warning low | TX source file ended before its starting size (truncated while being sent); transfer failed |
 | TxSendMetadataFailed | warning low | TX transaction failed to send metadata PDU |
 | TxEarlyFinReceived | warning low | TX transaction received early FIN, cancelling transfer |
 | TxInvalidNakPdu | warning low | TX transaction received invalid NAK PDU |

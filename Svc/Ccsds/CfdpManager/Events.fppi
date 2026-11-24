@@ -374,6 +374,17 @@ event TxFileOpenFailed(
     severity warning low \
     format "TX class {} transaction {}:{} failed to open file {}, error={}"
 
+event TxFileShortRead(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    filename: string size MaxFilePathSize @< Source file being sent
+    offset: U32 @< File offset where the read returned no data
+    fileSize: U32 @< File size when the transfer started
+) \
+    severity warning low \
+    format "TX class {} transaction {}:{} source file {} ended at offset {}, before its starting size {}; transfer failed"
+
 event TxFileSeekFailed(
     cfdpClass: Cfdp.Class @< CFDP class
     srcEid: U32 @< Source entity ID
