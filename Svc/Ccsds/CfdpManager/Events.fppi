@@ -640,3 +640,18 @@ event TxLateFinAcked(
 ) \
     severity diagnostic \
     format "Acknowledged late FIN for transaction {}:{}"
+
+event DataInQueueOverflow(
+    channelId: U8 @< Channel the PDU was received on
+) \
+    severity warning high \
+    format "Channel {}: received PDU dropped because the CfdpManager queue is full" \
+    throttle 5
+
+event CommandQueueOverflow(
+    opCode: FwOpcodeType @< Opcode of the command that was not executed
+    cmdSeq: U32 @< Sequence number of the command that was not executed
+) \
+    severity warning high \
+    format "Command opcode 0x{x} sequence {} not executed because the CfdpManager queue is full" \
+    throttle 5

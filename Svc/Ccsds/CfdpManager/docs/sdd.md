@@ -61,7 +61,7 @@ Ports are organized as follows:
 
 | Name | Type | Port Type | Description |
 |------|------|-----------|-------------|
-| run1Hz | async input | `Svc.Sched` | Scheduler port that must be invoked at 1 Hz to drive CFDP protocol timer logic, transaction processing, and state machine execution |
+| run1Hz | async input | `Svc.Sched` | Scheduler port that must be invoked at 1 Hz to drive CFDP protocol timer logic, transaction processing, and state machine execution. A tick that arrives while the component queue is full is dropped (see Queue Overflow). |
 | pingIn | async input | `Svc.Ping` | Health check input port for liveness monitoring |
 | pingOut | output | `Svc.Ping` | Health check output port for responding to pings |
 
@@ -70,7 +70,7 @@ Ports are organized as follows:
 | Name | Type | Port Type | Description |
 |------|------|-----------|-------------|
 | dataOut | output array[N] | `Fw.BufferSend` | Send encoded CFDP PDU data buffers to downstream components. One port (`N`) per CFDP channel. |
-| dataReturnIn | async input array[N] | `Fw.BufferSend` | Receive buffers previously sent via `dataOut` after downstream processing is complete. One port per CFDP channel. |
+| dataReturnIn | async input array[N] | `Fw.BufferSend` | Receive buffers previously sent via `dataOut` after downstream processing is complete. One port per CFDP channel. If the component queue is full the buffer is deallocated directly on the caller's thread (see Queue Overflow). |
 | bufferAllocate | output array[N] | `Fw.BufferGet` | Request allocation of buffers for constructing outgoing CFDP PDUs. One port (`N`) per CFDP channel. |
 | bufferDeallocate | output array[N] | `Fw.BufferSend` | Return/deallocate buffers that were allocated but not sent (e.g., due to errors). One port (`N`) per CFDP channel. |
 
@@ -78,7 +78,7 @@ Ports are organized as follows:
 
 | Name | Type | Port Type | Description |
 |------|------|-----------|-------------|
-| dataIn | async input array[N] | `Fw.BufferSend` | Receive incoming CFDP PDU data buffers from upstream components (e.g., deframing, radio). One port (`N`) per CFDP channel. |
+| dataIn | async input array[N] | `Fw.BufferSend` | Receive incoming CFDP PDU data buffers from upstream components (e.g., deframing, radio). One port (`N`) per CFDP channel. A PDU that arrives while the component queue is full is dropped and its buffer returned (see Queue Overflow). |
 | dataInReturn | output array[N] | `Fw.BufferSend` | Return buffers received via `dataIn` after PDU processing is complete. One port (`N`) per CFDP channel. |
 
 #### File Transfer Ports
@@ -229,6 +229,24 @@ The transmission throttling mechanism works in conjunction with buffer allocatio
 #### Receive Throttling
 
 Unlike transmit operations that are driven by the periodic `run1Hz` scheduler port, receive operations in CfdpManager are driven by the `dataIn` async input port. Incoming CFDP PDUs arrive via this port and are processed immediately by the component's thread when the port handler is invoked, without per-cycle limits. Receive throttling was implemented in NASA's CF (CFDP) application because CF processes received PDUs during scheduled execution cycles. In contrast, CfdpManager processes incoming PDUs asynchronously as they arrive, so there is no architectural reason to throttle incoming PDUs.
+
+#### Queue Overflow
+
+`CfdpManager` is an active component: `run1Hz`, `dataIn`, `dataReturnIn`, `pingIn`, and every command share one message queue. Received PDUs arrive at whatever rate the link delivers them, so the queue can fill whenever the upstream producer gets ahead of the component thread. None of these inputs raises a FATAL assertion when the queue is full. Each one degrades as follows:
+
+| Input | Behavior when the queue is full |
+|---|---|
+| `dataIn` | The PDU is dropped. The buffer is returned through `dataInReturn`, the drop is counted in the channel's `recvDropped` telemetry, and the `DataInQueueOverflow` warning is emitted. A Class 2 transfer recovers the PDU through NAK or timer retransmission; a Class 1 transfer loses it. |
+| `dataReturnIn` | The buffer is deallocated through `bufferDeallocate` directly. Nothing is lost, because deallocation is all the handler does. |
+| `run1Hz` | The tick is dropped. Protocol timers and telemetry slip by one second for each dropped tick. |
+| `pingIn` | The ping is dropped, so a queue that stays full is reported by the health monitor. |
+| Commands | The command is not executed. It is answered with `BUSY` and the `CommandQueueOverflow` warning is emitted. |
+
+The `dataIn`, `dataReturnIn`, and command behaviors run in overflow hooks on the caller's thread, not on the component thread. The hooks use only output ports, events, and atomic counters, and never touch engine state. The `dataIn` drop count is added to `recvDropped` on the component thread at the next `run1Hz` cycle. The component connected to `bufferDeallocate` must therefore accept calls from the thread that drives `dataReturnIn`.
+
+`DataInQueueOverflow` and `CommandQueueOverflow` are throttled to five events each so that a sustained overload cannot flood the event log. Each is re-armed by the first `run1Hz` cycle in which no overflow of its kind occurred.
+
+Dropping is a last resort. A deployment should size the `CfdpManager` queue and the upstream buffer pool, and set the thread priority, so that the queue does not fill under the PDU rate the link can deliver.
 
 ### Directory Playback and Polling
 
@@ -499,6 +517,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | InvalidPollInterval | warning low | Invalid poll interval requested (must be non-zero) |
 | SetFlowState | activity low | Set channel to specified flow state |
 | ResetCounters | activity high | Reset telemetry counters for channel (0xFF indicates all channels) |
+| CommandQueueOverflow | warning high | Command not executed because the component queue is full (opcode, sequence number); throttled |
 
 ### PDU Serialization/Deserialization Errors
 
@@ -580,6 +599,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | Event Name | Severity | Description |
 |------------|----------|-------------|
 | BuffersExhausted | warning low | Unable to allocate a PDU buffer |
+| DataInQueueOverflow | warning high | Received PDU dropped because the component queue is full (channel); throttled |
 | FailKeepFileMove | warning low | Failed to move source file to move directory |
 | FailPollFileMove | warning low | Failed to move source file to fail directory |
 | FileDataSegmentMetadata | warning low | File data PDU with unsupported segment metadata received |
@@ -597,6 +617,8 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | FileRemoveFailed | warning low | Failed to remove file |
 
 ## Commands
+
+A command that arrives while the component queue is full is not executed and is answered with `BUSY` (see Queue Overflow).
 
 | Name | Description |
 |---|---|
@@ -654,7 +676,7 @@ Telemetry is emitted as the `ChannelTelemetry` array, one `ChannelTelemetry` str
 | Field | Type | Description |
 |---|---|---|
 | recvErrors | U32 | Number of PDU receive errors. Incremented when malformed or invalid PDUs are received |
-| recvDropped | U32 | Number of PDUs dropped due to lack of resources (buffers, transactions) |
+| recvDropped | U32 | Number of PDUs dropped due to lack of resources (buffers, transactions, or a full component queue) |
 | recvSpurious | U32 | Number of spurious PDUs received (PDUs for nonexistent or completed transactions) |
 | recvFileDataBytes | U64 | Total file data bytes received across all transactions |
 | recvNakSegmentRequests | U32 | Number of NAK segment requests received from peer entity |
@@ -748,3 +770,4 @@ section above.
 | CFDP-013 | `CfdpManager` shall process malformed or degenerate received PDUs, including zero-length FileData segments, without raising a FATAL assertion | Preserves deployment availability against untrusted link input and prevents a single crafted PDU from terminating the process ([GHSA-mh5x-2m6h-8267](https://github.com/nasa/fprime/security/advisories/GHSA-mh5x-2m6h-8267)) | Unit Test |
 | CFDP-014 | `CfdpManager` shall skip and report a playback or poll directory entry whose combined source or destination path exceeds `MaxFilePathSize`, continuing with the remaining entries without raising a FATAL assertion | Directory contents and the `PlaybackDirectory` arguments are ground-controlled and must not be able to assert the flight software ([#5890](https://github.com/nasa/fprime/issues/5890)) | Unit Test |
 | CFDP-015 | `CfdpManager` shall treat an `ack_timer` or `inactivity_timer` of zero as expiring on the first 1 Hz cycle after it is armed, without raising a FATAL assertion | `ChannelConfig` is a ground-settable parameter and must not be able to assert the flight software ([#5890](https://github.com/nasa/fprime/issues/5890)) | Unit Test |
+| CFDP-016 | `CfdpManager` shall not raise a FATAL assertion when its message queue is full: it shall drop a received PDU and return its buffer, deallocate a returned buffer, drop a 1 Hz tick, and answer a command with `BUSY` | The rate of received PDUs is set by the link, not by the flight software, so a traffic burst must not be able to terminate the process that hosts `CfdpManager` | Unit Test |

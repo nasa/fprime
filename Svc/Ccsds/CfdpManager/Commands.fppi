@@ -7,7 +7,8 @@ async command SendFile(
     $priority: U8 @< Priority: 0=highest priority
     sourceFileName: string size MaxFilePathSize @< The name of the on-board file to send
     destFileName: string size MaxFilePathSize @< The name of the destination file on the ground
-)
+) \
+    hook
 
 @ Command to start a directory playback
 async command PlaybackDirectory(
@@ -18,7 +19,8 @@ async command PlaybackDirectory(
     $priority: U8 @< Priority: 0=highest priority
     sourceDirectory: string size MaxFilePathSize @< The name of the on-board directory to send
     destDirectory: string size MaxFilePathSize @< The name of the destination directory on the ground
-)
+) \
+    hook
 
 @ Command to start a directory poll
 async command PollDirectory(
@@ -30,19 +32,22 @@ async command PollDirectory(
     interval: U32 @< Interval to poll the directory in seconds
     sourceDirectory: string size MaxFilePathSize @< The name of the on-board directory to send
     destDirectory: string size MaxFilePathSize @< The name of the destination directory on the ground
-)
+) \
+    hook
 
 @ Command to stop a directory poll
 async command StopPollDirectory(
     channelId: U8 @< Channel ID to stop
     pollId: U8 @< Channel poll ID to stop
-)
+) \
+    hook
 
 @ Command to set channel's flow status
 async command SetChannelFlow(
     channelId: U8 @< Channel ID to set
     freeze: Cfdp.Flow @< Flow state to set
-)
+) \
+    hook
 
 @ Command to suspend or resume a transaction
 async command SuspendResumeTransaction(
@@ -50,23 +55,27 @@ async command SuspendResumeTransaction(
     transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
     entityId: Cfdp.EntityId @< Entity ID of the transaction
     $action: Cfdp.SuspendResume @< Action to take: SUSPEND or RESUME
-)
+) \
+    hook
 
 @ Command to cancel a transaction with graceful close-out
 async command CancelTransaction(
     channelId: U8 @< Channel ID for the transaction
     transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
     entityId: Cfdp.EntityId @< Entity ID of the transaction
-)
+) \
+    hook
 
 @ Command to abandon a transaction immediately
 async command AbandonTransaction(
     channelId: U8 @< Channel ID for the transaction
     transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
     entityId: Cfdp.EntityId @< Entity ID of the transaction
-)
+) \
+    hook
 
 @ Command to reset telemetry counters
 async command ResetCounters(
     channelId: U8 @< Channel ID to reset (0xFF for all channels)
-)
+) \
+    hook

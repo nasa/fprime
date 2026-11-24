@@ -20,7 +20,12 @@ namespace Cfdp {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-CfdpManager ::CfdpManager(const char* const compName) : CfdpManagerComponentBase(compName), m_engine(nullptr) {}
+CfdpManager ::CfdpManager(const char* const compName)
+    : CfdpManagerComponentBase(compName), m_engine(nullptr), m_commandOverflowRejects(0) {
+    for (U8 i = 0; i < Cfdp::NumChannels; i++) {
+        this->m_dataInOverflowDrops[i].store(0, std::memory_order_relaxed);
+    }
+}
 
 CfdpManager ::~CfdpManager() {
     // Clean up the queue resources allocated during initialization
@@ -80,6 +85,9 @@ void CfdpManager ::cleanup() {
 void CfdpManager ::run1Hz_handler(FwIndexType portNum, U32 context) {
     // The timer logic built into the CFDP engine requires it to be driven at 1 Hz
     FW_ASSERT(this->m_engine != nullptr);
+
+    // Account for PDUs dropped while the queue was full
+    this->collectQueueOverflowDrops();
 
     // Drain any port-initiated file send requests before cycling the engine
     this->drainFileInQueue();
@@ -243,6 +251,95 @@ Svc::SendFileResponse CfdpManager ::fileIn_handler(FwIndexType portNum,
 void CfdpManager ::pingIn_handler(FwIndexType portNum, U32 key) {
     // send ping response
     this->pingOut_out(0, key);
+}
+
+// ----------------------------------------------------------------------
+// Queue overflow hooks
+//
+// Called on the caller's thread when the component queue is full. They use
+// only output ports, events and atomic counters; engine state belongs to the
+// component thread.
+// ----------------------------------------------------------------------
+
+void CfdpManager ::dataIn_overflowHook(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    FW_ASSERT(portNum >= 0, portNum);
+    FW_ASSERT(portNum < Cfdp::NumChannels, portNum, Cfdp::NumChannels);
+
+    // The PDU is dropped. Class 2 recovers through NAK and timer retransmission; Class 1 loses the data.
+    this->m_dataInOverflowDrops[portNum].fetch_add(1, std::memory_order_relaxed);
+    this->log_WARNING_HI_DataInQueueOverflow(static_cast<U8>(portNum));
+
+    // The sender still owns the buffer, so hand it back as the handler would have
+    this->dataInReturn_out(portNum, fwBuffer);
+}
+
+void CfdpManager ::dataReturnIn_overflowHook(FwIndexType portNum, Fw::Buffer& fwBuffer) {
+    // Nothing is lost here: the handler only deallocates the buffer, so do that directly
+    FW_ASSERT(portNum >= 0, portNum);
+    FW_ASSERT(portNum < Cfdp::NumChannels, portNum, Cfdp::NumChannels);
+    this->bufferDeallocate_out(portNum, fwBuffer);
+}
+
+void CfdpManager ::SendFile_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) {
+    this->rejectCommandOnOverflow(opCode, cmdSeq);
+}
+
+void CfdpManager ::PlaybackDirectory_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) {
+    this->rejectCommandOnOverflow(opCode, cmdSeq);
+}
+
+void CfdpManager ::PollDirectory_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) {
+    this->rejectCommandOnOverflow(opCode, cmdSeq);
+}
+
+void CfdpManager ::StopPollDirectory_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) {
+    this->rejectCommandOnOverflow(opCode, cmdSeq);
+}
+
+void CfdpManager ::SetChannelFlow_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) {
+    this->rejectCommandOnOverflow(opCode, cmdSeq);
+}
+
+void CfdpManager ::SuspendResumeTransaction_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) {
+    this->rejectCommandOnOverflow(opCode, cmdSeq);
+}
+
+void CfdpManager ::CancelTransaction_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) {
+    this->rejectCommandOnOverflow(opCode, cmdSeq);
+}
+
+void CfdpManager ::AbandonTransaction_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) {
+    this->rejectCommandOnOverflow(opCode, cmdSeq);
+}
+
+void CfdpManager ::ResetCounters_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) {
+    this->rejectCommandOnOverflow(opCode, cmdSeq);
+}
+
+void CfdpManager ::rejectCommandOnOverflow(FwOpcodeType opCode, U32 cmdSeq) {
+    this->m_commandOverflowRejects.fetch_add(1, std::memory_order_relaxed);
+    this->log_WARNING_HI_CommandQueueOverflow(opCode, cmdSeq);
+    // Answer the command so the dispatcher does not keep it pending
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::BUSY);
+}
+
+void CfdpManager ::collectQueueOverflowDrops() {
+    U32 dropped = 0;
+    for (U8 i = 0; i < Cfdp::NumChannels; i++) {
+        const U32 channelDropped = this->m_dataInOverflowDrops[i].exchange(0, std::memory_order_relaxed);
+        if (channelDropped > 0) {
+            this->m_channelTelemetry[i].set_recvDropped(this->m_channelTelemetry[i].get_recvDropped() + channelDropped);
+            dropped += channelDropped;
+        }
+    }
+    // The overflow events are throttled. Re-arm each one after a cycle with no overflow of its kind,
+    // so a later episode is reported again.
+    if (dropped == 0) {
+        this->log_WARNING_HI_DataInQueueOverflow_ThrottleClear();
+    }
+    if (this->m_commandOverflowRejects.exchange(0, std::memory_order_relaxed) == 0) {
+        this->log_WARNING_HI_CommandQueueOverflow_ThrottleClear();
+    }
 }
 
 // ----------------------------------------------------------------------

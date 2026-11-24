@@ -7,6 +7,8 @@
 #ifndef CCSDS_CFDPMANAGER_HPP
 #define CCSDS_CFDPMANAGER_HPP
 
+#include <atomic>
+
 #include <Fw/Types/MemAllocator.hpp>
 #include <Fw/Types/String.hpp>
 #include <Os/Queue.hpp>
@@ -301,6 +303,69 @@ class CfdpManager final : public CfdpManagerComponentBase {
 
   private:
     // ----------------------------------------------------------------------
+    // Queue overflow hooks
+    //
+    // These are called when the component queue is full, on the thread of the
+    // caller, not on the component thread. They must not touch engine state.
+    // ----------------------------------------------------------------------
+
+    //! Overflow hook for input port dataIn
+    //!
+    //! Drops the received PDU: returns the buffer to its sender through dataInReturn, counts the
+    //! drop for the channel's recvDropped telemetry, and emits a throttled DataInQueueOverflow.
+    void dataIn_overflowHook(FwIndexType portNum,  //!< The port number
+                             Fw::Buffer& fwBuffer  //!< The buffer
+                             ) override;
+
+    //! Overflow hook for input port dataReturnIn
+    //!
+    //! Deallocates the returned buffer directly, exactly as the handler would have, so a full
+    //! queue never leaks a PDU buffer.
+    void dataReturnIn_overflowHook(FwIndexType portNum,  //!< The port number
+                                   Fw::Buffer& fwBuffer  //!< The buffer
+                                   ) override;
+
+    //! Overflow hook for command SendFile
+    void SendFile_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) override;
+
+    //! Overflow hook for command PlaybackDirectory
+    void PlaybackDirectory_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) override;
+
+    //! Overflow hook for command PollDirectory
+    void PollDirectory_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) override;
+
+    //! Overflow hook for command StopPollDirectory
+    void StopPollDirectory_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) override;
+
+    //! Overflow hook for command SetChannelFlow
+    void SetChannelFlow_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) override;
+
+    //! Overflow hook for command SuspendResumeTransaction
+    void SuspendResumeTransaction_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) override;
+
+    //! Overflow hook for command CancelTransaction
+    void CancelTransaction_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) override;
+
+    //! Overflow hook for command AbandonTransaction
+    void AbandonTransaction_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) override;
+
+    //! Overflow hook for command ResetCounters
+    void ResetCounters_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) override;
+
+    //! Reject a command that could not be queued: respond BUSY and emit a throttled
+    //! CommandQueueOverflow
+    void rejectCommandOnOverflow(FwOpcodeType opCode,  //!< The opcode
+                                 U32 cmdSeq            //!< The command sequence number
+    );
+
+    //! Fold PDUs dropped by dataIn_overflowHook into channel telemetry
+    //!
+    //! Called on the component thread from run1Hz. Re-arms the overflow events once a full
+    //! cycle passes without a drop.
+    void collectQueueOverflowDrops();
+
+  private:
+    // ----------------------------------------------------------------------
     // Handler implementations for commands
     // ----------------------------------------------------------------------
 
@@ -547,6 +612,13 @@ class CfdpManager final : public CfdpManagerComponentBase {
     // ----------------------------------------------------------------------
     // CFDP Engine - owns all protocol state and operations
     Engine* m_engine;
+
+    //! PDUs dropped per channel by dataIn_overflowHook and not yet folded into telemetry.
+    //! Written on the sender's thread, so atomic.
+    std::atomic<U32> m_dataInOverflowDrops[Cfdp::NumChannels];
+
+    //! Commands rejected by an overflow hook since the last run1Hz cycle
+    std::atomic<U32> m_commandOverflowRejects;
 
     //! Queue of accepted port-initiated file send requests, drained on the active thread
     Os::Queue m_fileInQueue;

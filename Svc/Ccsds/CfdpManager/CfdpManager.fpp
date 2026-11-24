@@ -20,7 +20,7 @@ module Cfdp {
 
         # Admin ports
         @ Run port which must be invoked at 1 Hz in order to satisfy CFDP timer logic
-        async input port run1Hz: Svc.Sched
+        async input port run1Hz: Svc.Sched drop
 
         @ Ping in port
         async input port pingIn: Svc.Ping drop
@@ -33,7 +33,7 @@ module Cfdp {
         output port dataOut: [NumChannels] Fw.BufferSend
 
         @ Buffer that was sent via the dataOut port and is now being returned
-        async input port dataReturnIn: [NumChannels] Fw.BufferSend
+        async input port dataReturnIn: [NumChannels] Fw.BufferSend hook
 
         @ Port for allocating buffers to hold PDU data
         output port bufferAllocate: [NumChannels] Fw.BufferGet
@@ -43,7 +43,7 @@ module Cfdp {
 
         # Uplink ports
         @ Port for input PDU data
-        async input port dataIn: [NumChannels] Fw.BufferSend
+        async input port dataIn: [NumChannels] Fw.BufferSend hook
 
         @ Return buffer that was received on the dataIn port
         output port dataInReturn: [NumChannels] Fw.BufferSend
