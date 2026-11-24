@@ -792,6 +792,92 @@ void HealthTester ::miscellaneous() {
     ASSERT_TLM_PingLateWarnings(0, 1);
 }
 
+void HealthTester ::commandQueueOverflow() {
+    TEST_CASE(900.1.12, "Command Queue Overflow");
+    COMMENT("A command arriving while the queue is full is answered with BUSY instead of asserting.");
+
+    // Health only drains its queue in Run, so commands sent between two Run calls accumulate
+    for (U32 i = 0; i < QUEUE_DEPTH; i++) {
+        sendCmd_HLTH_ENABLE(0, i, Fw::Enabled::ENABLED);
+    }
+    ASSERT_CMD_RESPONSE_SIZE(0);
+    ASSERT_EVENTS_SIZE(0);
+
+    // The queue is full: this command is rejected, not executed
+    sendCmd_HLTH_ENABLE(0, 99, Fw::Enabled::DISABLED);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, HealthComponentBase::OPCODE_HLTH_ENABLE, 99, Fw::CmdResponse::BUSY);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_HLTH_CMD_QUEUE_OVERFLOW(0, HealthComponentBase::OPCODE_HLTH_ENABLE, 99);
+
+    // The event is throttled: a longer burst is still answered, but reported only 5 times
+    for (U32 i = 0; i < 6; i++) {
+        sendCmd_HLTH_ENABLE(0, 100 + i, Fw::Enabled::DISABLED);
+    }
+    ASSERT_CMD_RESPONSE_SIZE(7);
+    ASSERT_EVENTS_HLTH_CMD_QUEUE_OVERFLOW_SIZE(5);
+
+    // Run drains the queue: the accepted commands execute, the rejected ones never do
+    this->clearHistory();
+    invoke_to_Run(0, 0);
+    ASSERT_CMD_RESPONSE_SIZE(QUEUE_DEPTH);
+    ASSERT_CMD_RESPONSE(0, HealthComponentBase::OPCODE_HLTH_ENABLE, 0, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_HLTH_CHECK_ENABLE_SIZE(QUEUE_DEPTH);
+    ASSERT_EQ(Fw::Enabled(Fw::Enabled::ENABLED), this->component.m_enabled);
+
+    // A Run cycle with no rejected command re-arms the event
+    invoke_to_Run(0, 0);
+    this->clearHistory();
+    for (U32 i = 0; i < QUEUE_DEPTH; i++) {
+        sendCmd_HLTH_ENABLE(0, i, Fw::Enabled::ENABLED);
+    }
+    sendCmd_HLTH_ENABLE(0, 99, Fw::Enabled::DISABLED);
+    ASSERT_EVENTS_HLTH_CMD_QUEUE_OVERFLOW_SIZE(1);
+    invoke_to_Run(0, 0);
+}
+
+void HealthTester ::pingReturnQueueOverflow() {
+    TEST_CASE(900.1.13, "Ping Return Queue Overflow");
+    COMMENT("A ping reply arriving while the queue is full is kept and handled by the next Run.");
+
+    // Send the pings. The tester does not answer them, so every entry is awaiting its reply.
+    invoke_to_Run(0, 0);
+    ASSERT_EQ(1U, this->component.m_pingTrackerEntries[0].cycleCount);
+    ASSERT_EQ(1U, this->component.m_pingTrackerEntries[1].cycleCount);
+    const U32 key0 = this->component.m_pingTrackerEntries[0].key;
+
+    // Fill the queue with commands, then deliver the reply for entry 0
+    for (U32 i = 0; i < QUEUE_DEPTH; i++) {
+        sendCmd_HLTH_ENABLE(0, i, Fw::Enabled::ENABLED);
+    }
+    this->clearHistory();
+    invoke_to_PingReturn(0, key0);
+
+    // Nothing asserted and nothing was reported; the reply is parked for Run
+    ASSERT_EVENTS_SIZE(0);
+    ASSERT_TRUE(this->component.m_overflowPingPending[0].load());
+    ASSERT_EQ(1U, this->component.m_pingTrackerEntries[0].cycleCount);
+
+    // Run takes the parked reply: entry 0 is cleared and pinged again with a new key, exactly
+    // as if its reply had been queued, while the unanswered entry 1 keeps counting
+    invoke_to_Run(0, 0);
+    ASSERT_FALSE(this->component.m_overflowPingPending[0].load());
+    ASSERT_EQ(1U, this->component.m_pingTrackerEntries[0].cycleCount);
+    ASSERT_NE(key0, this->component.m_pingTrackerEntries[0].key);
+    ASSERT_EQ(2U, this->component.m_pingTrackerEntries[1].cycleCount);
+    ASSERT_EVENTS_HLTH_PING_WRONG_KEY_SIZE(0);
+    ASSERT_EVENTS_HLTH_PING_LATE_SIZE(0);
+
+    // A parked reply with the wrong key is still checked
+    for (U32 i = 0; i < QUEUE_DEPTH; i++) {
+        sendCmd_HLTH_ENABLE(0, i, Fw::Enabled::ENABLED);
+    }
+    invoke_to_PingReturn(1, this->component.m_pingTrackerEntries[1].key + 1000);
+    this->clearHistory();
+    invoke_to_Run(0, 0);
+    ASSERT_EVENTS_HLTH_PING_WRONG_KEY_SIZE(1);
+}
+
 void HealthTester::textLogIn(const FwEventIdType id,          //!< The event ID
                              const Fw::Time& timeTag,         //!< The time
                              const Fw::LogSeverity severity,  //!< The severity

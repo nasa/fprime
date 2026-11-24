@@ -397,6 +397,51 @@ void FileUplinkTester ::cancelPacketInDataMode() {
     this->removeFile("test.bin");
 }
 
+void FileUplinkTester ::queueOverflow() {
+    // A file packet that arrives while the queue is full is dropped and its buffer returned.
+    // Before the fix bufferSendIn used the default queue-full behavior, so this asserted.
+
+    // One byte is shorter than the packet descriptor: the handler rejects these packets and
+    // returns their buffers, so they only exercise the queue.
+    U8 queuedByte = 0;
+    Fw::Buffer queuedBuffer(&queuedByte, sizeof(queuedByte));
+    for (U32 i = 0; i < QUEUE_DEPTH; i++) {
+        this->invoke_to_bufferSendIn(0, queuedBuffer);
+    }
+    ASSERT_from_bufferSendOut_SIZE(0);
+    ASSERT_EVENTS_PacketDroppedQueueFull_SIZE(0);
+
+    // Every packet beyond the queue depth comes straight back, before anything is dispatched.
+    // The event is throttled to 5.
+    U8 overflowBytes[7] = {0};
+    for (U32 i = 0; i < FW_NUM_ARRAY_ELEMENTS(overflowBytes); i++) {
+        Fw::Buffer overflowBuffer(&overflowBytes[i], 1);
+        this->invoke_to_bufferSendIn(0, overflowBuffer);
+        ASSERT_from_bufferSendOut_SIZE(i + 1);
+        ASSERT_from_bufferSendOut(i, overflowBuffer);
+    }
+    ASSERT_EVENTS_PacketDroppedQueueFull_SIZE(5);
+
+    // The queued packets are still handled; doDispatch blocks on an empty queue, so dispatch
+    // exactly what is queued. (The tester history holds QUEUE_DEPTH entries, so clear it first.)
+    this->clearHistory();
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        (void)this->component.doDispatch();
+    }
+    ASSERT_from_bufferSendOut_SIZE(QUEUE_DEPTH);
+
+    // Draining the queue re-arms the event
+    this->clearHistory();
+    for (U32 i = 0; i < QUEUE_DEPTH + 1; i++) {
+        this->invoke_to_bufferSendIn(0, queuedBuffer);
+    }
+    ASSERT_EVENTS_PacketDroppedQueueFull_SIZE(1);
+    this->clearHistory();
+    while (this->component.m_queue.getMessagesAvailable() > 0) {
+        (void)this->component.doDispatch();
+    }
+}
+
 // ----------------------------------------------------------------------
 // Handlers for from ports
 // ----------------------------------------------------------------------

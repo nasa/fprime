@@ -43,6 +43,10 @@ class FileUplinkTester : public FileUplinkGTestBase {
     //!
     void sendFile();
 
+    //! Overflow the component queue with file packets
+    //!
+    void queueOverflow();
+
     //! Send a file with a bad checksum value
     //!
     void badChecksum();

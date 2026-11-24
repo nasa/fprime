@@ -13,6 +13,8 @@
 #ifndef Health_HPP
 #define Health_HPP
 
+#include <atomic>
+
 #include <Fw/Types/String.hpp>
 #include <Svc/Health/HealthComponentAc.hpp>
 
@@ -87,6 +89,39 @@ class HealthImpl final : public HealthComponentBase {
     //!  \param key Key value
     void PingReturn_handler(const FwIndexType portNum, U32 key);
 
+    //!  \brief ping return overflow hook
+    //!
+    //!  Called on the replying component's thread when the queue is full. A lost reply would
+    //!  leave its entry waiting until it reached the FATAL threshold, so the reply is parked
+    //!  in a per-port slot and handled by the next Run.
+    //!
+    //!  \param portNum Port number
+    //!  \param key Key value
+    void PingReturn_overflowHook(const FwIndexType portNum, U32 key);
+
+    //!  \brief HLTH_ENABLE overflow hook
+    void HLTH_ENABLE_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq);
+
+    //!  \brief HLTH_PING_ENABLE overflow hook
+    void HLTH_PING_ENABLE_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq);
+
+    //!  \brief HLTH_CHNG_PING overflow hook
+    void HLTH_CHNG_PING_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq);
+
+    //!  \brief Reject a command that could not be queued
+    //!
+    //!  Responds BUSY and emits the throttled HLTH_CMD_QUEUE_OVERFLOW event. Called on the
+    //!  command dispatcher's thread.
+    //!
+    //!  \param opCode Command opcode
+    //!  \param cmdSeq Command sequence
+    void rejectCommandOnOverflow(FwOpcodeType opCode, U32 cmdSeq);
+
+    //!  \brief Handle ping replies parked by PingReturn_overflowHook
+    //!
+    //!  Called from Run, on the thread that owns the ping table.
+    void handleOverflowPingReturns();
+
     //!  \brief run handler
     //!
     //!  Handler implementation for run
@@ -152,6 +187,15 @@ class HealthImpl final : public HealthComponentBase {
     U32 m_warnings;                //!< number of slip warnings issued
     Fw::Enabled m_enabled;         //!< if the pinger is enabled
     FwSizeType queue_depth;        //!< queue depth passed by user
+
+    //!  Ping replies that arrived while the queue was full, one slot per port. At most one ping
+    //!  is outstanding per port, so one slot is enough. Written on the replying component's
+    //!  thread and read by Run, so atomic.
+    std::atomic<bool> m_overflowPingPending[NUM_PINGRETURN_INPUT_PORTS];
+    std::atomic<U32> m_overflowPingKey[NUM_PINGRETURN_INPUT_PORTS];
+
+    //!  Set when a command was rejected for a full queue since the last Run
+    std::atomic<bool> m_cmdOverflowed;
 };
 
 }  // end namespace Svc

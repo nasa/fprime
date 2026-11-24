@@ -17,6 +17,7 @@ HTH-004 | The `Svc::Health` component shall have a command to enable or disable 
 HTH-005 | The `Svc::Health` component shall have a command to enable or disable monitoring for a particular port. | Unit Test
 HTH-006 | The `Svc::Health` component shall have a command to update ping timeout values for a port | Unit Test
 HTH-007 | The `Svc::Health` component shall stroke a watchdog port while all ping replies are within their limit and health checks pass | Unit Test
+HTH-008 | The `Svc::Health` component shall not raise a FATAL assertion when its message queue is full: it shall answer a command with `BUSY`, and it shall keep a ping reply and handle it on the next `Run` | Unit Test
 
 ## 3. Design
 
@@ -35,7 +36,7 @@ The Svc::Health component uses the following port types:
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
 [`Svc::Ping`](../../../Svc/Ping/docs/sdd.md) | PingSend | Output | n/a | Send ping requests from components
-[`Svc::Ping`](../../../Svc/Ping/docs/sdd.md) | PingReturn | Input | Asynchronous | Receive ping responses from components
+[`Svc::Ping`](../../../Svc/Ping/docs/sdd.md) | PingReturn | Input | Asynchronous | Receive ping responses from components. A reply that arrives while the queue is full is kept, not dropped (see 3.2.2)
 [`Svc::Sched`](../../../Svc/Sched/docs/sdd.md) | Run | Input | Synchronous | Execute periodic behavior
 [`Svc::WatchDog`](../../../Svc/WatchDog/docs/sdd.md) | Wdog | Output | n/a | Send ping requests from components
 
@@ -44,6 +45,15 @@ Port Data Type | Name | Direction | Kind | Usage
 #### 3.2.1 Pings
 
 The `Svc::Health` component monitors health by iterating through a table of port numbers and their maximum allowed timeout. The timeout is specified as the number of calls to the `SchedIn` port. The actual timeout value in wall time will be dependent on the rate at which the port is called. During each `SchedIn` port call, the enabled ping entries are checked. A `PingSend` port is called with a key only when its entry has no outstanding ping. The key is simply a counter value maintained as a private data member. An active component with a `Svc::Ping` port is required to execute the port handler on the thread of the component. When the handler is invoked, it returns the value of the `Svc::Ping` port key argument as the argument to the output `Svc::Ping` port. When the health component receives the return port invocation on the `PingReturn` port, it sets a status in the tracking table indicating the response was received. In addition to dispatching pings to components, the `SchedIn` port call checks the status of all the dispatched pings to verify that they have not exceeded the specified timeout. If there is an outstanding ping, its cycle counter is incremented. The port is not pinged again until a valid response resets the entry. A WARNING is emitted when the counter equals the warning threshold and no FATAL has been reported for that ping, provided the FATAL threshold has not been reached. When the warning and FATAL thresholds are equal, only the FATAL event is emitted. For a nonzero FATAL threshold, a `HLTH_PING_LATE` event is emitted when the counter reaches or exceeds that threshold. This FATAL event is emitted only once per outstanding ping, and no subsequent WARNING is emitted after that FATAL. A valid ping response resets the reporting state. Changes made through `HLTH_CHNG_PING` take effect on the next health check for an outstanding ping: a lowered nonzero FATAL threshold can immediately trigger a FATAL event, while WARNING remains based on exact equality. A zero FATAL threshold requires a zero WARNING threshold and disables timeout detection for that entry, preserving the previous behavior. The entry remains enabled: an initial ping is sent, but no additional ping is sent while its response is outstanding. Use `HLTH_PING_ENABLE` to explicitly disable monitoring for an entry. Operators should exercise caution when lowering FATAL thresholds because a FATAL event can trigger software termination through the configured fatal handler. The component has commands to completely turn off monitoring, turn off monitoring for a specific port, or update the timeout values. The updated timeout values or monitoring updates are not stored through a software reset.
+
+#### 3.2.2 Queue Overflow
+
+`Svc::Health` is a queued component. Its commands and the ping replies on `PingReturn` share one message queue, and the queue is drained only when `Run` is called. Anything that arrives between two `Run` calls accumulates, so a burst of commands can fill the queue. A full queue does not raise a FATAL assertion:
+
+* A command that cannot be queued is not executed. It is answered with `BUSY` and reported with the `HLTH_CMD_QUEUE_OVERFLOW` warning. The event is throttled to five and is re-armed by the first `Run` cycle in which no command was rejected.
+* A ping reply that cannot be queued is kept. Dropping it would leave its entry waiting until it reached the FATAL threshold, turning a command burst into a false `HLTH_PING_LATE`. The overflow hook stores the reply's key in a slot for that port, and the next `Run` handles it after draining the queue, exactly as it handles a queued reply (including the wrong-key check). At most one ping is outstanding per port, so one slot per port is enough.
+
+The overflow hooks run on the thread of the caller: the command dispatcher for commands, the replying component for ping replies. The ping table belongs to the thread that calls `Run`, so the hooks touch only output ports, events and atomic variables.
 
 ### 3.3 Scenarios
 
@@ -150,6 +160,18 @@ FATAL, preserving the previous behavior.
 
 Requirement verified: `HTH-003`, `HTH-006`
 
+### 6.1.12 Command Queue Overflow Test
+
+This test fills the queue with commands without calling `Run`, then sends more. It verifies that each extra command is answered with `BUSY` and never executed, that `HLTH_CMD_QUEUE_OVERFLOW` is emitted and throttled, that the queued commands still execute on the next `Run`, and that the event is re-armed after a cycle with no rejected command.
+
+Requirement verified: `HTH-008`
+
+### 6.1.13 Ping Return Queue Overflow Test
+
+This test sends pings, fills the queue with commands, and then delivers a ping reply. It verifies that nothing asserts, that the next `Run` clears the entry and pings it again as if the reply had been queued, that an unanswered entry keeps counting, and that a kept reply with the wrong key is still reported.
+
+Requirement verified: `HTH-008`
+
 ## 6.2 Unit Test Coverage
 
 To see unit test coverage run fprime-util check --coverage
@@ -160,6 +182,7 @@ To see unit test coverage run fprime-util check --coverage
 Date | Description
 ---- | -----------
 1/11/2016 | Edits for design review
+11/20/2026 | Commands and ping replies no longer assert on a full queue; added `HLTH_CMD_QUEUE_OVERFLOW` and HTH-008
 
 
 

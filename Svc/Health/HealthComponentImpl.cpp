@@ -27,7 +27,12 @@ HealthImpl::HealthImpl(const char* const compName)
       m_watchDogCode(0),
       m_warnings(0),
       m_enabled(Fw::Enabled::ENABLED),
-      queue_depth(0) {
+      queue_depth(0),
+      m_cmdOverflowed(false) {
+    for (FwIndexType port = 0; port < NUM_PINGRETURN_INPUT_PORTS; port++) {
+        this->m_overflowPingPending[port].store(false, std::memory_order_relaxed);
+        this->m_overflowPingKey[port].store(0, std::memory_order_relaxed);
+    }
     static_assert((HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS >= 0) &&
                       (HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS <= std::numeric_limits<FwIndexType>::max()),
                   "NUM_PINGSEND_OUTPUT_PORTS must fit in the positive range of FwIndexType");
@@ -93,6 +98,14 @@ void HealthImpl::Run_handler(const FwIndexType portNum, U32 context) {
         FW_ASSERT(MSG_DISPATCH_OK == stat);
     }
 
+    // take the ping replies that could not be queued
+    this->handleOverflowPingReturns();
+
+    // HLTH_CMD_QUEUE_OVERFLOW is throttled; report it again after a cycle with no rejected command
+    if (!this->m_cmdOverflowed.exchange(false, std::memory_order_relaxed)) {
+        this->log_WARNING_HI_HLTH_CMD_QUEUE_OVERFLOW_ThrottleClear();
+    }
+
     if (this->m_enabled == Fw::Enabled::ENABLED) {
         // cycle through ping table, pinging ports that are not awaiting a reply
         // for ports that are awaiting a reply, increment their counters
@@ -142,6 +155,48 @@ void HealthImpl::Run_handler(const FwIndexType portNum, U32 context) {
     if (this->isConnected_WdogStroke_OutputPort(0)) {
         this->WdogStroke_out(0, this->m_watchDogCode);
     }
+}
+
+// ----------------------------------------------------------------------
+// Queue overflow hooks
+//
+// Called on the caller's thread when the component queue is full. The ping
+// table belongs to the thread that calls Run, so the hooks use only output
+// ports, events and atomics.
+// ----------------------------------------------------------------------
+
+void HealthImpl::PingReturn_overflowHook(const FwIndexType portNum, U32 key) {
+    FW_ASSERT(portNum >= 0 && portNum < NUM_PINGRETURN_INPUT_PORTS, static_cast<FwAssertArgType>(portNum));
+    // Publish the key before the flag so Run never reads a flag without its key
+    this->m_overflowPingKey[portNum].store(key);
+    this->m_overflowPingPending[portNum].store(true);
+}
+
+void HealthImpl::handleOverflowPingReturns() {
+    for (FwIndexType port = 0; port < NUM_PINGRETURN_INPUT_PORTS; port++) {
+        if (this->m_overflowPingPending[port].exchange(false)) {
+            this->PingReturn_handler(port, this->m_overflowPingKey[port].load());
+        }
+    }
+}
+
+void HealthImpl::HLTH_ENABLE_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) {
+    this->rejectCommandOnOverflow(opCode, cmdSeq);
+}
+
+void HealthImpl::HLTH_PING_ENABLE_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) {
+    this->rejectCommandOnOverflow(opCode, cmdSeq);
+}
+
+void HealthImpl::HLTH_CHNG_PING_cmdOverflowHook(FwOpcodeType opCode, U32 cmdSeq) {
+    this->rejectCommandOnOverflow(opCode, cmdSeq);
+}
+
+void HealthImpl::rejectCommandOnOverflow(FwOpcodeType opCode, U32 cmdSeq) {
+    this->m_cmdOverflowed.store(true, std::memory_order_relaxed);
+    this->log_WARNING_HI_HLTH_CMD_QUEUE_OVERFLOW(opCode, cmdSeq);
+    // Answer the command so the dispatcher does not keep it pending
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::BUSY);
 }
 
 // ----------------------------------------------------------------------

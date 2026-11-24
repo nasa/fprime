@@ -64,6 +64,11 @@ TEST(FileUplink, CancelPacketInDataMode) {
     tester.cancelPacketInDataMode();
 }
 
+TEST(FileUplink, QueueOverflow) {
+    Svc::FileUplinkTester tester;
+    tester.queueOverflow();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

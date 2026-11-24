@@ -11,7 +11,7 @@ module Svc {
     output port PingSend: [HealthPingPorts] Svc.Ping
 
     @ Ping return port
-    async input port PingReturn: [HealthPingPorts] Svc.Ping
+    async input port PingReturn: [HealthPingPorts] Svc.Ping hook
 
     @ Run port
     sync input port Run: Svc.Sched
@@ -59,14 +59,16 @@ module Svc {
     async command HLTH_ENABLE(
                                enable: Fw.Enabled @< whether or not health checks are enabled
                              ) \
-      opcode 0x0
+      opcode 0x0 \
+      hook
 
     @ Ignore a particular ping entry
     async command HLTH_PING_ENABLE(
                                     $entry: string size 40 @< The entry to enable/disable
                                     enable: Fw.Enabled @< whether or not a port is pinged
                                   ) \
-      opcode 0x1
+      opcode 0x1 \
+      hook
 
     @ Change ping value
     async command HLTH_CHNG_PING(
@@ -74,7 +76,8 @@ module Svc {
                                   warningValue: U32 @< Ping warning threshold
                                   fatalValue: U32 @< Ping fatal threshold
                                 ) \
-      opcode 0x2
+      opcode 0x2 \
+      hook
 
     # ----------------------------------------------------------------------
     # Events
@@ -149,6 +152,16 @@ module Svc {
       severity warning high \
       id 0x7 \
       format "Health ping for {} invalid values: WARN {} FATAL {}"
+
+    @ A command was not executed because the component queue was full
+    event HLTH_CMD_QUEUE_OVERFLOW(
+                                   opCode: FwOpcodeType @< The opcode of the command
+                                   cmdSeq: U32 @< The sequence number of the command
+                                 ) \
+      severity warning high \
+      id 0x8 \
+      format "Health command opcode 0x{x} sequence {} not executed because the queue is full" \
+      throttle 5
 
     # ----------------------------------------------------------------------
     # Telemetry

@@ -211,6 +211,14 @@ class FileUplink final : public FileUplinkComponentBase {
                               Fw::Buffer& buffer          //!< Buffer wrapping data
     );
 
+    //! Overflow hook for bufferSendIn
+    //!
+    //! Called on the sender's thread when the component queue is full. Drops the packet,
+    //! returns the buffer through bufferSendOut and emits PacketDroppedQueueFull.
+    void bufferSendIn_overflowHook(const FwIndexType portNum,  //!< The port number
+                                   Fw::Buffer& buffer          //!< Buffer wrapping data
+    );
+
     //! Handler implementation for pingIn
     //!
     void pingIn_handler(const FwIndexType portNum, /*!< The port number*/
