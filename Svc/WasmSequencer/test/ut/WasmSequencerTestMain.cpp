@@ -4170,8 +4170,8 @@ TEST_F(WasmSequencerConfigTester, DecoderOperandsExactFitLoads) {
 
 TEST_F(WasmSequencerConfigTester, ZeroDecoderOperandsAsserts) {
     REQUIREMENT("WASM-SEQ-003");
-    // Zero operand slots leaves the operand storage unallocated (null, length 0). A module that
-    // pushes any operand is rejected with ERR_OUT_OF_MEMORY instead of dereferencing the null storage.
+    // Zero operand slots is a misconfiguration; configure() rejects it up front with an assert
+    // instead of leaving the operand storage unallocated.
     WasmSequencer::Config cfg = this->standardConfig();
     cfg.maxDecoderOperands = 0;
     ASSERT_DEATH_IF_SUPPORTED(this->configureWith(cfg), "Assert: ");
