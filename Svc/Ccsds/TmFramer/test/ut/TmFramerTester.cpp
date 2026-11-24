@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "TmFramerTester.hpp"
+#include "Fw/Test/UnitTestAssert.hpp"
 #include "Svc/Ccsds/Types/TMHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/TMTrailerSerializableAc.hpp"
 #include "Svc/Ccsds/Utils/IdlePacket.hpp"
@@ -187,6 +188,53 @@ void TmFramerTester ::testPartialDataFieldAsserts() {
         this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED;
         ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "TmFramer.cpp");
     }
+}
+
+void TmFramerTester ::testVirtualChannelIdFromContext() {
+    U8 bufferData[TmFramer::TmPayloadCapacity] = {};
+    Fw::Buffer buffer(bufferData, sizeof(bufferData));
+    ComCfg::FrameContext context;
+
+    // The largest VCID the 3-bit field holds is written unchanged, beside the configured SCID
+    context.set_vcId(TMSubfields::vcIdMask);
+    this->invoke_to_dataIn(0, buffer, context);
+    ASSERT_from_dataOut_SIZE(1);
+    U8* const frameData = this->fromPortHistory_dataOut->at(0).data.getData();
+    ASSERT_EQ(this->getFrameVcId(frameData), TMSubfields::vcIdMask);
+    ASSERT_EQ(this->getFrameScId(frameData), ComCfg::SpacecraftId);
+
+    // A VCID outside the 3-bit field is a caller error
+    this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED;
+    context.set_vcId(static_cast<U8>(TMSubfields::vcIdMask + 1));
+    ASSERT_DEATH_IF_SUPPORTED(this->invoke_to_dataIn(0, buffer, context), "TmFramer.cpp");
+}
+
+void TmFramerTester ::testVirtualChannelIdMaskedWithoutAssert() {
+    U8 bufferData[TmFramer::TmPayloadCapacity] = {};
+    Fw::Buffer buffer(bufferData, sizeof(bufferData));
+    ComCfg::FrameContext context;
+
+    // With a non-aborting assert hook (as when FW_ASSERT does not halt), an oversized VCID is still
+    // reported, and the mask keeps it out of the Spacecraft ID bits of the Primary Header
+    ::Test::UnitTestAssert assertHook;
+    const U8 oversizedVcId = 0xFF;  // unmasked, bits 3-7 would land in Spacecraft ID bits 0-4
+    context.set_vcId(oversizedVcId);
+    this->invoke_to_dataIn(0, buffer, context);
+
+    // The VCID assert fired and reported the offending value (SVC-Ccsds-TM-FRAMER-016)
+    ASSERT_TRUE(assertHook.assertFailed());
+    ::Test::UnitTestAssert::File assertFile = ::Test::UnitTestAssert::fileInit;
+    FwSizeType assertLine = 0;
+    FwSizeType assertNumArgs = 0;
+    FwAssertArgType arg1 = 0, arg2 = 0, arg3 = 0, arg4 = 0, arg5 = 0, arg6 = 0;
+    assertHook.retrieveAssert(assertFile, assertLine, assertNumArgs, arg1, arg2, arg3, arg4, arg5, arg6);
+    ASSERT_EQ(arg1, static_cast<FwAssertArgType>(oversizedVcId));
+
+    // The mask kept the oversized VCID out of the Spacecraft ID bits: VC is vcId & 0x7, SCID unchanged
+    ASSERT_from_dataOut_SIZE(1);
+    U8* const frameData = this->fromPortHistory_dataOut->at(0).data.getData();
+    ASSERT_EQ(this->getFrameVcId(frameData), oversizedVcId & TMSubfields::vcIdMask);
+    ASSERT_EQ(this->getFrameScId(frameData), ComCfg::SpacecraftId);
 }
 
 // ----------------------------------------------------------------------

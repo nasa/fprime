@@ -30,6 +30,8 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     FW_ASSERT(data.getSize() == TmPayloadCapacity, static_cast<FwAssertArgType>(data.getSize()));
     FW_ASSERT(context.get_firstHeaderPointer() <= TMSubfields::fhpMask,
               static_cast<FwAssertArgType>(context.get_firstHeaderPointer()));
+    // A wider VCID does not fit the 3-bit field; the mask below would frame it on the wrong VC (Standard 4.1.2.3)
+    FW_ASSERT(context.get_vcId() <= TMSubfields::vcIdMask, static_cast<FwAssertArgType>(context.get_vcId()));
     FW_ASSERT(this->m_bufferState == BufferOwnershipState::OWNED, static_cast<FwAssertArgType>(this->m_bufferState));
 
     // -----------------------------------------------
@@ -38,8 +40,11 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     TMHeader header;
 
     // GVCID (Global Virtual Channel ID) (Standard 4.1.2.2 and 4.1.2.3)
-    U16 globalVcId = static_cast<U16>(context.get_vcId() << TMSubfields::virtualChannelIdOffset);
-    globalVcId |= static_cast<U16>(ComCfg::SpacecraftId << TMSubfields::spacecraftIdOffset);
+    // Each field is masked to its width so an out-of-range value cannot corrupt a neighboring field
+    U16 globalVcId =
+        static_cast<U16>((context.get_vcId() & TMSubfields::vcIdMask) << TMSubfields::virtualChannelIdOffset);
+    globalVcId |= static_cast<U16>((static_cast<U16>(ComCfg::SpacecraftId) & TMSubfields::spacecraftIdMask)
+                                   << TMSubfields::spacecraftIdOffset);
     globalVcId |= 0x0;  // Operational Control Field: Flag set to 0 (Standard 4.1.2.4)
 
     // Data Field Status (Standard 4.1.2.7):
