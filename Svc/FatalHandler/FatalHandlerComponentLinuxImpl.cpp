@@ -23,7 +23,7 @@ namespace Svc {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void FatalHandlerComponentImpl::FatalReceive_handler(const FwIndexType portNum, FwEventIdType Id) {
+void FatalHandlerComponentImpl::FatalReceive_handler(const FwIndexType portNum, FwEventIdType Id, const Fw::LogBuffer& args) {
     // for **nix, delay then exit with error code
     Fw::Logger::log("FATAL %d handled.\n", Id);
     (void)Os::Task::delay(Fw::TimeInterval(1, 0));

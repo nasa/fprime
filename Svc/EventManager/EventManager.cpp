@@ -60,7 +60,7 @@ void EventManager::LogRecv_handler(FwIndexType portNum,
     // if connected, announce the FATAL
     if (Fw::LogSeverity::FATAL == severity.e) {
         if (this->isConnected_FatalAnnounce_OutputPort(0)) {
-            this->FatalAnnounce_out(0, id);
+            this->FatalAnnounce_out(0, id, args);
         }
     }
 }
