@@ -15,7 +15,7 @@ namespace Svc {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void FatalHandlerComponentImpl::FatalReceive_handler(const FwIndexType portNum, FwEventIdType Id) {
+void FatalHandlerComponentImpl::FatalReceive_handler(const FwIndexType portNum, FwEventIdType Id, const Fw::LogBuffer& args) {
     Fw::Logger::log("FATAL %" PRI_FwEventIdType "handled.\n", Id);
     while (true) {
     }  // Returning might be bad

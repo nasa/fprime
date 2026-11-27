@@ -34,9 +34,9 @@ class EventManagerTester : public Svc::EventManagerGTestBase {
                               Fw::ComBuffer& data,        //!< Buffer containing packet data
                               U32 context                 //!< context (not used)
                               ) override;
-    void from_FatalAnnounce_handler(const FwIndexType portNum,  //!< The port number
-                                    FwEventIdType Id            //!< The ID of the FATAL event
-                                    ) override;
+    void from_FatalAnnounce_handler(const FwIndexType portNum,            //!< The port number
+                                    FwEventIdType Id,                     //!< The ID of the FATAL event
+                                    const Fw::LogBuffer& args) override;  //!< Args of the FATAL event (i.e line number)
 
     Svc::EventManager& m_impl;
 
@@ -45,6 +45,7 @@ class EventManagerTester : public Svc::EventManagerGTestBase {
 
     bool m_receivedFatalEvent;
     FwEventIdType m_fatalID;
+    Fw::LogBuffer m_fatalArgs;
 
     void runWithFilters(Fw::LogSeverity filter);
 

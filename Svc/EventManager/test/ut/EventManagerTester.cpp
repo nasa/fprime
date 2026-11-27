@@ -38,10 +38,12 @@ void EventManagerTester::from_PktSend_handler(const FwIndexType portNum,  //!< T
 }
 
 void EventManagerTester::from_FatalAnnounce_handler(const FwIndexType portNum,  //!< The port number
-                                                    FwEventIdType Id            //!< The ID of the FATAL event
+                                                    FwEventIdType Id,            //!< The ID of the FATAL event
+                                                    const Fw::LogBuffer& args
 ) {
     this->m_receivedFatalEvent = true;
     this->m_fatalID = Id;
+    this->m_fatalArgs = args;
 }
 
 void EventManagerTester::runEventNominal() {
@@ -369,6 +371,7 @@ void EventManagerTester::runEventFatal() {
     // should have seen event port
     ASSERT_TRUE(this->m_receivedFatalEvent);
     ASSERT_EQ(this->m_fatalID, id);
+    ASSERT_EQ(this->m_fatalArgs, buff);
     // dispatch message
     this->m_impl.doDispatch();
     // should have received packet

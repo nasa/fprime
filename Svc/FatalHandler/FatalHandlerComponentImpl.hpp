@@ -40,7 +40,9 @@ class FatalHandlerComponentImpl final : public FatalHandlerComponentBase {
     //! Handler implementation for FatalReceive
     //!
     void FatalReceive_handler(const FwIndexType portNum, /*!< The port number*/
-                              FwEventIdType Id           /*!< The ID of the FATAL event*/
+                              FwEventIdType Id,          /*!< The ID of the FATAL event*/
+                              const Fw::LogBuffer& args  /*!< args of the FATAL event (i.e line number)*/
+
     );
 };
 
