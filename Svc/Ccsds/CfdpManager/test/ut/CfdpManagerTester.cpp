@@ -1452,6 +1452,132 @@ void CfdpManagerTester::testClass2TxQueuedAbandonNoHang() {
     this->queuedTxFinishedNoHang(true);
 }
 
+void CfdpManagerTester::expireWaitingClass2Tx(Transaction* txn) {
+    // Put the sender where it waits for the peer after EOF has been sent and acknowledged: on the
+    // TXW queue with nothing left to send. The peer then never sends its FIN, so the inactivity
+    // timer runs out. sTick() is what the channel calls for every TXW transaction each cycle.
+    Channel* chan = this->component.m_engine->m_channels[txn->m_chan_num];
+    chan->dequeueTransaction(txn);
+    chan->insertSortPrio(txn, QueueId::TXW);
+    txn->m_flags.tx.send_eof = false;
+    txn->m_flags.tx.send_fin_ack = false;
+    txn->m_flags.com.inactivity_fired = false;
+    txn->m_flags.com.canceled = false;
+    txn->m_inactivity_timer.setTimer(1);
+
+    I32 cont = 0;
+    txn->sTick(&cont);
+}
+
+void CfdpManagerTester::testClass2TxInactivityReleasesCommandedSlot() {
+    // A Class 2 downlink that times out waiting for the peer must be finished, not just recycled.
+    // Before the fix the transaction object went back to the free pool but its commanded-transfer
+    // slot was never released, so MaxCommandedPlaybackFilesPerChan timeouts left SendFile refusing
+    // every later request on the channel.
+    const U8 channelId = TEST_CHANNEL_ID_0;
+    Channel* chan = this->component.m_engine->m_channels[channelId];
+    ASSERT_NE(nullptr, chan);
+    const U32 localEid = this->component.getLocalEidParam();
+
+    // More timeouts than there are slots: every SendFile must still be accepted
+    for (U32 i = 0; i < MaxCommandedPlaybackFilesPerChan + 2; i++) {
+        this->clearHistory();
+        TransactionSetup setup;
+        setupTxTransaction("timeout.bin", "/ground/timeout.bin", channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_2,
+                           TEST_PRIORITY, TxnState::TXN_STATE_S2, setup);
+        ASSERT_NE(nullptr, setup.txn) << "SendFile " << i << " should have started a transaction";
+        ASSERT_EQ(1U, chan->getNumCmdTx());
+
+        this->expireWaitingClass2Tx(setup.txn);
+
+        // The slot is released and the object is recycled
+        ASSERT_EQ(0U, chan->getNumCmdTx()) << "Timeout " << i << " should release the commanded-transfer slot";
+        ASSERT_EQ(nullptr, findTransaction(channelId, setup.expectedSeqNum));
+
+        // The timeout is reported as a failed transfer, once
+        ASSERT_EVENTS_TxInactivityTimeout_SIZE(1);
+        ASSERT_EVENTS_TxFileTransferFailed_SIZE(1);
+        ASSERT_EVENTS_TxFileTransferFailed(0, Cfdp::Class::CLASS_2, setup.expectedSeqNum, localEid, "timeout.bin",
+                                           TEST_GROUND_EID, "/ground/timeout.bin",
+                                           static_cast<U8>(TxnStatus::TXN_STATUS_INACTIVITY_DETECTED));
+        ASSERT_EVENTS_TxFileTransferCompleted_SIZE(0);
+    }
+}
+
+void CfdpManagerTester::testClass2TxInactivityNotifiesPortRequester() {
+    // A port-initiated downlink that times out must report the failure on fileDoneOut, or the
+    // requesting component waits for a completion that never comes.
+    const U8 channelId = TEST_CHANNEL_ID_0;
+    this->clearHistory();
+
+    TransactionSetup setup;
+    setupTxPortTransaction("timeout_port.bin", "/ground/timeout_port.bin", channelId, TxnState::TXN_STATE_S2, setup);
+    ASSERT_NE(nullptr, setup.txn);
+    ASSERT_from_fileDoneOut_SIZE(0);
+
+    this->expireWaitingClass2Tx(setup.txn);
+
+    ASSERT_EQ(1U, this->fromPortHistory_fileDoneOut->size()) << "Timeout should be reported on fileDoneOut";
+    ASSERT_EQ(Svc::SendFileStatus::STATUS_ERROR, this->fromPortHistory_fileDoneOut->at(0).resp.get_status());
+    ASSERT_EVENTS_TxFileTransferFailed_SIZE(1);
+    ASSERT_EQ(nullptr, findTransaction(channelId, setup.expectedSeqNum));
+}
+
+void CfdpManagerTester::testClass2TxInactivityReleasesPlaybackCount() {
+    // A playback or poll counts its outstanding transactions and only completes when the count
+    // reaches zero. A child transaction that times out must be removed from that count.
+    const U8 channelId = TEST_CHANNEL_ID_0;
+    this->clearHistory();
+
+    TransactionSetup setup;
+    setupTxTransaction("timeout_pb.bin", "/ground/timeout_pb.bin", channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_2,
+                       TEST_PRIORITY, TxnState::TXN_STATE_S2, setup);
+    ASSERT_NE(nullptr, setup.txn);
+
+    // Attach the transaction to a playback as its only outstanding child
+    Playback playback;
+    playback.num_ts = 1;
+    setup.txn->m_pb = &playback;
+
+    this->expireWaitingClass2Tx(setup.txn);
+
+    ASSERT_EQ(0U, playback.num_ts);
+    ASSERT_EQ(nullptr, findTransaction(channelId, setup.expectedSeqNum));
+}
+
+void CfdpManagerTester::testClass2TxHoldRecycleDoesNotFinishTwice() {
+    // The same recycle path serves a transaction that was already finished and is sitting in
+    // HOLD. Its completion work must not be repeated when the HOLD timer expires.
+    const U8 channelId = TEST_CHANNEL_ID_0;
+    Channel* chan = this->component.m_engine->m_channels[channelId];
+    ASSERT_NE(nullptr, chan);
+    this->clearHistory();
+
+    TransactionSetup setup;
+    setupTxTransaction("held.bin", "/ground/held.bin", channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_2, TEST_PRIORITY,
+                       TxnState::TXN_STATE_S2, setup);
+    ASSERT_NE(nullptr, setup.txn);
+    ASSERT_EQ(1U, chan->getNumCmdTx());
+
+    this->component.m_engine->setTxnStatus(setup.txn, TxnStatus::TXN_STATUS_ACK_LIMIT_NO_EOF);
+    this->component.m_engine->finishTransaction(setup.txn, true);
+    ASSERT_EQ(TxnState::TXN_STATE_HOLD, setup.txn->m_state);
+    ASSERT_EQ(0U, chan->getNumCmdTx());
+    ASSERT_EVENTS_TxFileTransferFailed_SIZE(1);
+
+    // Expire the HOLD timer: the transaction is recycled with no second failure event, and the
+    // slot count is not decremented again (decrementing at zero would assert)
+    setup.txn->m_flags.com.inactivity_fired = false;
+    setup.txn->m_inactivity_timer.setTimer(1);
+    I32 cont = 0;
+    setup.txn->sTick(&cont);
+
+    ASSERT_EQ(nullptr, findTransaction(channelId, setup.expectedSeqNum));
+    ASSERT_EQ(0U, chan->getNumCmdTx());
+    ASSERT_EVENTS_TxFileTransferFailed_SIZE(1);
+    ASSERT_EVENTS_TxInactivityTimeout_SIZE(0);
+}
+
 void CfdpManagerTester::startActiveClass2Tx(const char* srcFile, TransactionSetup& setup) {
     // Start a Class 2 downlink and leave it mid-transfer on TXA in FILEDATA: allow exactly two
     // PDUs this cycle (Metadata and the first FileData) so the second FileData is throttled.
