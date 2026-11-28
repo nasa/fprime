@@ -49,6 +49,9 @@ class PosixConsole : public ConsoleInterface {
     // Functions overrides
     // ------------------------------------
 
+    // Bring the base class's writeMessage(const Fw::ConstStringBase&) overload back into scope
+    using ConsoleInterface::writeMessage;
+
     //! \brief write message to console
     //!
     //! Write a message to the console with a bounded size. This will use the active file descriptor as the output

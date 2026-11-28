@@ -98,7 +98,7 @@ class MyOsMutex : public MutexInterface {
 ```
 
 > [!TIP]
-> Look at each interface header in `Os/` (e.g., `Os/MutexInterface.hpp`, `Os/File.hpp`, `Os/Task.hpp`) to see the exact set of pure virtual methods that need to be implemented for each. Each interface also defines a `Status` enum — your implementation must return the appropriate [status values](../../../Os/docs/sdd.md#24-error-handling). Note: for services that support compile-time selection, the pure-virtual contract lives in the `*Interface.hpp` header (e.g. `Os/MutexInterface.hpp`, `Os/RawTimeInterface.hpp`), while `Os/Mutex.hpp` / `Os/RawTime.hpp` are thin alias/aggregation headers.
+> Look at each interface header in `Os/` (e.g., `Os/MutexInterface.hpp`, `Os/FileInterface.hpp`, `Os/Task.hpp`) to see the exact set of pure virtual methods that need to be implemented for each. Each interface also defines a `Status` enum — your implementation must return the appropriate [status values](../../../Os/docs/sdd.md#24-error-handling). Note: for services that support compile-time selection, the pure-virtual contract lives in the `*Interface.hpp` header (e.g. `Os/MutexInterface.hpp`, `Os/RawTimeInterface.hpp`), while `Os/Mutex.hpp` / `Os/RawTime.hpp` are thin alias/aggregation headers.
 
 ### 2.2 — Implement the Methods
 
@@ -191,22 +191,44 @@ namespace MyPlatform {
 }
 
 namespace Os {
-    class DelegateMutex;             // Forward-declare the link-time delegates
-    class DelegateConditionVariable; // kept for Mutex and ConditionVariable
+    // Forward-declare the link-time delegates kept for every other service
+    class DelegateMutex;
+    class DelegateConditionVariable;
+    class DelegateFile;
+    class DelegateFileSystem;
+    class DelegateDirectory;
+    class DelegateConsole;
+    class DelegateCountingSemaphore;
+    class DelegateCpu;
+    class DelegateMemory;
 
     // Alias Os::RawTime directly to your implementation (no delegate wrapper)
     using RawTime = MyPlatform::MyRawTime;
 
     // The override file replaces the whole default, so every selection must be
-    // present: keep Mutex and ConditionVariable on the link-time delegates
+    // present: keep the remaining services on the link-time delegates
     using Mutex = DelegateMutex;
     using ConditionVariable = DelegateConditionVariable;
+    using File = DelegateFile;
+    using FileSystem = DelegateFileSystem;
+    using Directory = DelegateDirectory;
+    using Console = DelegateConsole;
+    using CountingSemaphore = DelegateCountingSemaphore;
+    using Cpu = DelegateCpu;
+    using Memory = DelegateMemory;
 }
 
 // Point to your implementation header (will be included after RawTimeInterface.hpp)
 #define OS_RAW_TIME_HEADER "MyPlatform/Os/RawTime.hpp"
 #define OS_MUTEX_HEADER <Os/DelegateMutex.hpp>
 #define OS_CONDITION_VARIABLE_HEADER <Os/DelegateConditionVariable.hpp>
+#define OS_FILE_HEADER <Os/DelegateFile.hpp>
+#define OS_FILE_SYSTEM_HEADER <Os/DelegateFileSystem.hpp>
+#define OS_DIRECTORY_HEADER <Os/DelegateDirectory.hpp>
+#define OS_CONSOLE_HEADER <Os/DelegateConsole.hpp>
+#define OS_COUNTING_SEMAPHORE_HEADER <Os/DelegateCountingSemaphore.hpp>
+#define OS_CPU_HEADER <Os/DelegateCpu.hpp>
+#define OS_MEMORY_HEADER <Os/DelegateMemory.hpp>
 
 #endif  // CONFIG_OSSELECTION_HPP
 ```
@@ -362,7 +384,20 @@ The full set of [OSAL modules](../../../Os/docs/sdd.md#2-core-services) that can
 | **Cpu** | `CpuInterface` | `getCount()`, `getTicks()` |
 | **Memory** | `MemoryInterface` | `getUsage()` |
 
-Refer to each interface header in `Os/` for the full method signatures and status enums.
+Refer to each `Os/<Service>Interface.hpp` header for the full method signatures and status enums.
+For the services that have been split into an alias header plus an interface header (`File`,
+`FileSystem`, `Directory`, `Mutex`, `ConditionVariable`, `Console`, `CountingSemaphore`, `Cpu`, `Memory`,
+`RawTime`), `Os/<Service>.hpp` is a thin aggregator and the pure-virtual contract is in
+`Os/<Service>Interface.hpp`.
+
+> [!NOTE]
+> The steps above cover *link-time* selection, where your class is reached through the generated
+> `getDelegate()` factory. If instead you alias `Os::<Service>` directly to your class
+> (*compile-time* selection, see [`Os/docs/sdd.md` §5.2.2](../../../Os/docs/sdd.md#522-compile-time-selection-performance-optimization)),
+> inheriting from the interface is not sufficient: singleton services (`Console`, `FileSystem`,
+> `Cpu`, `Memory`) must also supply `static void init()` and `static <Impl>& getSingleton()`, and
+> `Os::File`/`Os::Directory` must maintain the base class's mode/open state and, for `File`,
+> override the CRC methods. See the "Additional requirements" notes in `Os/docs/sdd.md` §5.2.2.
 
 ---
 

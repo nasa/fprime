@@ -54,13 +54,14 @@ static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<size
               "Maximum value of FwSizeType less than the maximum value of size_t. Configure a larger type.");
 
 //!\brief default copy constructor
-PosixFile::PosixFile(const PosixFile& other) {
+PosixFile::PosixFile(const PosixFile& other) : FileInterface(other) {
     // Must properly duplicate the file handle
     this->m_handle.m_file_descriptor = fcntl(other.m_handle.m_file_descriptor, F_DUPFD, 0);
 }
 
 PosixFile& PosixFile::operator=(const PosixFile& other) {
     if (this != &other) {
+        FileInterface::operator=(other);
         this->m_handle.m_file_descriptor = fcntl(other.m_handle.m_file_descriptor, F_DUPFD, 0);
     }
     return *this;
@@ -130,6 +131,9 @@ PosixFile::Status PosixFile::open(const char* filepath,
         status = Os::Posix::errno_to_file_status(errno_store);
     }
     this->m_handle.m_file_descriptor = descriptor;
+    // Maintain the mode state tracked by FileInterface so that this class behaves correctly when it
+    // is used directly as the Os::File alias (compile-time selection)
+    this->setMode((status == OP_OK) ? requested_mode : Mode::OPEN_NO_MODE);
     return status;
 }
 
@@ -139,6 +143,7 @@ void PosixFile::close() {
         (void)::close(this->m_handle.m_file_descriptor);
         this->m_handle.m_file_descriptor = PosixFileHandle::INVALID_FILE_DESCRIPTOR;
     }
+    this->setMode(Mode::OPEN_NO_MODE);
 }
 
 PosixFile::Status PosixFile::size(FwSizeType& size_result) {

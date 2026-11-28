@@ -49,16 +49,16 @@ class PosixDirectory : public DirectoryInterface {
     //! \return status of the operation
     Status open(const char* path, OpenMode mode) override;
 
-    //! \brief Check if Directory is open or not
-    //! \return true if Directory is open, false otherwise
-    bool isOpen();
-
     //! \brief Rewind directory stream
     //!
     //! Each read operation moves the seek position forward. This function resets the seek position to the beginning.
     //!
     //! \return status of the operation
     Status rewind() override;
+
+    // Bring the base class's read(Fw::StringBase&) overload back into scope; it would
+    // otherwise be hidden by the read(char*, FwSizeType) override declared below.
+    using DirectoryInterface::read;
 
     //! \brief Get next filename from directory stream
     //!

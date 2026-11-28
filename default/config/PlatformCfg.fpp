@@ -9,7 +9,12 @@ constant FW_CONSOLE_HANDLE_MAX_SIZE = 24
 constant FW_TASK_HANDLE_MAX_SIZE = 40
 
 @ Maximum size of a handle for Os::File
-constant FW_FILE_HANDLE_MAX_SIZE = 16
+@ Posix: vtable pointer (8) + FileInterface::m_mode (4) + m_file_descriptor (int, 4) = 16 bytes;
+@ implementations with a pointer-sized handle (e.g. Zephyr) = 24 bytes on a 64-bit platform. The
+@ open mode moved from the Os::File wrapper onto FileInterface so that it is available to
+@ compile-time-selected implementations, which pushed those implementations past the previous
+@ 16-byte budget.
+constant FW_FILE_HANDLE_MAX_SIZE = 24
 
 @ Maximum size of a handle for Os::Mutex
 constant FW_MUTEX_HANDLE_MAX_SIZE = 72
@@ -18,7 +23,14 @@ constant FW_MUTEX_HANDLE_MAX_SIZE = 72
 constant FW_QUEUE_HANDLE_MAX_SIZE = 368
 
 @ Maximum size of a handle for Os::Directory
-constant FW_DIRECTORY_HANDLE_MAX_SIZE = 16
+@
+@ Driven by Os::Posix::Directory::PosixDirectory, whose placement-new footprint is
+@ vtable pointer (8) + DirectoryInterface::m_is_open (1, padded) + PosixDirectoryHandle::
+@ m_dir_descriptor (DIR*, 8) = 24 bytes on a 64-bit platform. The open-state flag moved
+@ from the Os::Directory wrapper onto DirectoryInterface so that it is available to
+@ compile-time-selected implementations, which pushed the delegate past the previous
+@ 16-byte budget. Rounded up to 32 to keep alignment margin.
+constant FW_DIRECTORY_HANDLE_MAX_SIZE = 32
 
 @ Maximum size of a handle for Os::FileSystem
 constant FW_FILESYSTEM_HANDLE_MAX_SIZE = 16
